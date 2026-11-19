@@ -20,8 +20,10 @@
 //! view ([`crate::select_mask_view::preview_proxy`]). With Real-Time Refinement the stroke being
 //! drawn joins the preview while the pointer moves; without, when it is released.
 //!
-//! Not here yet: Refine Hair (#2671) and Object Aware (a learned model, #2788) are shown but greyed
-//! out, and Photoshop's Presets.
+//! Refine Hair is one more edit: it re-solves the selection's edge from the image
+//! ([`photocraft_algo::matting::refine_hair`]). It has no learned hair detector, so it works on the
+//! whole edge. Presets name the refinement and output settings, kept in the preferences. Not here
+//! yet: Object Aware (a learned model, #2788) is shown but greyed out.
 
 use std::sync::Arc;
 
@@ -49,9 +51,17 @@ const PANEL_W: f32 = 350.0;
 const UNDO_LIMIT: usize = 100;
 /// The `prefs.dialogs` key under which Remember Settings keeps the settings.
 const REMEMBERED: &str = "select.refineEdge.workspace";
+/// The `prefs.dialogs` key under which the named presets live.
+const PRESETS: &str = "select.refineEdge.presets";
+/// What a preset holds: the settings that shape the result, not how it is viewed.
+const PRESET_KEYS: [&str; 9] = ["radius", "smartRadius", "smooth", "feather", "contrast", "shiftEdge", "decontaminate", "amount", "output"];
+const MAX_PRESETS: usize = 64;
+const MAX_PRESET_NAME: usize = 64;
 const CMD: &str = crate::select_mask_view::COMMAND;
 /// The Output To targets, in Photoshop's order.
 const OUTPUTS: [&str; 6] = ["selection", "layerMask", "newLayer", "newLayerWithMask", "newDocument", "newDocumentWithMask"];
+/// The built-in preset's name.
+const DEFAULT_PRESET: &str = "Default";
 /// Photoshop's brush sizes (px).
 const SIZES: std::ops::RangeInclusive<f64> = 1.0..=5000.0;
 
@@ -291,6 +301,12 @@ impl SmOpts {
         })
     }
 
+    /// The settings a preset holds.
+    fn preset(&self) -> Map<String, Value> {
+        let all = self.to_json();
+        PRESET_KEYS.iter().filter_map(|k| Some((k.to_string(), all.get(k)?.clone()))).collect()
+    }
+
     /// `select.refineEdge`'s refinement and output params.
     fn refine_params(&self) -> Map<String, Value> {
         let mut p = Map::new();
@@ -430,6 +446,11 @@ pub struct SelectMaskWorkspace {
     pub brush_size: f64,
     pub hardness: f32,
     pub sample_all: bool,
+    /// The saved presets by name, and whether they changed since the preferences last took them.
+    presets: Map<String, Value>,
+    presets_changed: bool,
+    /// The name being typed for a new preset, while its field is open.
+    preset_name: Option<String>,
     pub edits: Vec<Value>,
     pub strokes: Vec<Value>,
     undo: Vec<Step>,
@@ -474,12 +495,59 @@ impl SelectMaskWorkspace {
             "redo": self.redo.len(),
             "polygon": self.poly.as_ref().map_or(0, |(_, p)| p.len()),
             "settings": self.opts.to_json(),
+            "preset": self.current_preset(),
+            "presets": self.presets.keys().collect::<Vec<_>>(),
             "proxyScale": self.proxy_k(),
             "selectedProxyPixels": self.preview.selected,
             "previewReady": (self.preview.tex.is_some() || self.preview.pending.is_some()) && self.preview.shown == self.preview.want,
             "previewError": self.preview.error,
             "error": self.error,
         })
+    }
+
+    /// The name of the preset the settings match: `Default`, a saved one, or `None` when they
+    /// match none. Worked out from the settings, so undoing can't leave it out of date.
+    fn current_preset(&self) -> Option<&str> {
+        let now = self.opts.preset();
+        if now == SmOpts::default().preset() {
+            return Some(DEFAULT_PRESET);
+        }
+        self.presets.iter().find(|(_, v)| v.as_object() == Some(&now)).map(|(k, _)| k.as_str())
+    }
+
+    /// Replaces the settings with a preset's, as one undoable step.
+    fn load_preset(&mut self, name: &str) -> Result<(), String> {
+        let settings = if name == DEFAULT_PRESET {
+            Value::Object(SmOpts::default().preset())
+        } else {
+            self.presets.get(name).cloned().ok_or_else(|| format!("no preset `{name}`"))?
+        };
+        let mut opts = self.opts.clone();
+        opts.apply(&settings)?;
+        let prev = Step::State { edits: self.edits.clone(), strokes: self.strokes.clone(), opts: Box::new(std::mem::replace(&mut self.opts, opts)) };
+        self.push(prev);
+        self.stale();
+        Ok(())
+    }
+
+    /// Saves the settings under `name`, replacing a preset of that name.
+    fn save_preset(&mut self, name: &str) -> Result<(), String> {
+        let name = name.trim();
+        if name.is_empty() || name.chars().count() > MAX_PRESET_NAME || name == DEFAULT_PRESET {
+            return Err(format!("a preset needs a name of up to {MAX_PRESET_NAME} characters, other than {DEFAULT_PRESET}"));
+        }
+        if self.presets.len() >= MAX_PRESETS && !self.presets.contains_key(name) {
+            return Err(format!("at most {MAX_PRESETS} presets: delete one first"));
+        }
+        self.presets.insert(name.to_string(), Value::Object(self.opts.preset()));
+        self.presets_changed = true;
+        Ok(())
+    }
+
+    fn delete_preset(&mut self, name: &str) -> Result<(), String> {
+        self.presets.remove(name).ok_or_else(|| format!("no preset `{name}`"))?;
+        self.presets_changed = true;
+        Ok(())
     }
 
     /// The factor the preview runs at.
@@ -771,6 +839,7 @@ pub fn open(app: &mut PhotocraftApp) -> Result<(), String> {
         _ if mask_only || target_mask => opts.output = "layerMask".into(),
         _ => {}
     }
+    let presets = app.session.prefs().dialogs.get(PRESETS).and_then(Value::as_object).cloned().unwrap_or_default();
     let mut w = SelectMaskWorkspace {
         layer,
         document,
@@ -787,6 +856,9 @@ pub fn open(app: &mut PhotocraftApp) -> Result<(), String> {
         brush_size: 30.0,
         hardness: 100.0,
         sample_all: false,
+        presets,
+        presets_changed: false,
+        preset_name: None,
         edits: Vec::new(),
         strokes: Vec::new(),
         undo: Vec::new(),
@@ -851,6 +923,14 @@ fn commit_params(w: &SelectMaskWorkspace) -> Value {
         p.insert("target".into(), json!("mask"));
     }
     Value::Object(p)
+}
+
+/// Hands changed presets to the preferences.
+fn store_presets(app: &mut PhotocraftApp) {
+    let Some(w) = app.distort.select_mask.as_mut().filter(|w| w.presets_changed) else { return };
+    w.presets_changed = false;
+    let presets = Value::Object(w.presets.clone());
+    app.session.prefs.edit(|p| p.dialogs.insert(PRESETS.into(), presets));
 }
 
 fn remember(app: &mut PhotocraftApp, opts: &SmOpts) {
@@ -1002,12 +1082,22 @@ pub fn control(app: &mut PhotocraftApp, ui: &Value) -> Result<Value, String> {
         let sample_all = w.sample_all;
         for (key, edit) in [
             ("selectSubject", json!({"tool": "subject", "sampleAllLayers": sample_all})),
+            ("refineHair", json!({"tool": "hair", "sampleAllLayers": sample_all})),
             ("clearSelection", json!({"tool": "clear"})),
             ("invert", json!({"tool": "invert"})),
         ] {
             if flag(key) {
                 w.add_edit(edit);
             }
+        }
+        if let Some(name) = ui.get("preset").and_then(Value::as_str) {
+            w.load_preset(name)?;
+        }
+        if let Some(name) = ui.get("savePreset").and_then(Value::as_str) {
+            w.save_preset(name)?;
+        }
+        if let Some(name) = ui.get("deletePreset").and_then(Value::as_str) {
+            w.delete_preset(name)?;
         }
         if flag("reset") {
             reset(w);
@@ -1019,6 +1109,7 @@ pub fn control(app: &mut PhotocraftApp, ui: &Value) -> Result<Value, String> {
             redo(w);
         }
     }
+    store_presets(app);
     if flag("waitPreview") {
         wait_preview(app)?;
     }
@@ -1065,6 +1156,8 @@ struct Job {
     /// The committed edits and, with Real-Time Refinement, the one being drawn.
     edits: Vec<Value>,
     extra: Option<Value>,
+    /// The local model Select Subject runs, if the preferences choose one.
+    subject: Option<select_mask_edits::SubjectModel>,
     /// The refinement params with `__view` and `refineStrokes`.
     params: Value,
     cache: Option<BaseCache>,
@@ -1103,6 +1196,8 @@ fn job(app: &PhotocraftApp) -> Option<Job> {
         params.insert("target".into(), json!("mask"));
     }
     let proxy = w.preview.proxy.as_ref().filter(|(pk, rev, _)| *pk == k && *rev == st.revision).map(|(_, _, d)| Arc::clone(d));
+    let uses_subject = w.edits.iter().chain(&extra).any(|e| e["tool"] == "subject");
+    let subject = if uses_subject { select_mask_edits::subject_model(&app.session).ok().flatten() } else { None };
     Some(Job {
         doc: Arc::clone(&st.doc),
         revision: st.revision,
@@ -1111,6 +1206,7 @@ fn job(app: &PhotocraftApp) -> Option<Job> {
         target_mask: w.target_mask,
         edits: w.edits.clone(),
         extra,
+        subject,
         params: Value::Object(params),
         cache: w.preview.cache.clone(),
         proxy,
@@ -1204,6 +1300,10 @@ fn compute(job: Job, cancel: Option<&photocraft_engine::jobs::JobCtx>) -> Result
     let mut doc = (*proxy).clone();
     let layer = job.layer.filter(|id| doc.layer(*id).is_some());
     let mut params = job.params;
+    let ctx = cancel.cloned().unwrap_or_default();
+    let run = |doc: &Document, from, edits: &[select_mask_edits::SelectionEdit]| {
+        select_mask_edits::apply_using(doc, layer, from, edits, job.subject.as_ref(), &ctx).map_err(|e| e.to_string())
+    };
     let start = || {
         let mask = layer.and_then(|id| doc.layer(id)).and_then(|l| l.mask.as_ref()).map(|m| m.surface.clone());
         if job.target_mask { mask.or_else(|| doc.selection.clone()) } else { doc.selection.clone().or(mask) }
@@ -1221,10 +1321,10 @@ fn compute(job: Job, cancel: Option<&photocraft_engine::jobs::JobCtx>) -> Result
             None => (start(), 0),
         };
         let rest = scaled(job.edits.get(done..).unwrap_or_default())?;
-        let base = select_mask_edits::apply(&doc, layer, from, &rest);
+        let base = run(&doc, from, &rest)?;
         cache = BaseCache { k, revision: job.revision, edits: job.edits.clone(), base: base.clone() };
         let base = match &job.extra {
-            Some(e) => select_mask_edits::apply(&doc, layer, base, &scaled(std::slice::from_ref(e))?),
+            Some(e) => run(&doc, base, &scaled(std::slice::from_ref(e))?)?,
             None => base,
         };
         // Nothing selected is an empty selection, not "use the layer mask".
@@ -1558,18 +1658,58 @@ fn options_bar(ui: &mut egui::Ui, w: &mut SelectMaskWorkspace) -> Option<Value> 
         if widgets::secondary_button(ui, tl!("Select Subject"), 0.0).clicked() {
             edit = Some(json!({"tool": "subject", "sampleAllLayers": w.sample_all}));
         }
-        // Refine Hair needs hair detection PhotoCraft doesn't have yet (#2671): greyed, saying so.
-        ui.add_enabled_ui(false, |ui| widgets::secondary_button(ui, tl!("Refine Hair"), 0.0))
-            .inner
-            .on_disabled_hover_text(tl!("Refine Hair needs hair detection, which isn't available yet"));
+        if widgets::secondary_button(ui, tl!("Refine Hair"), 0.0).on_hover_text(tl!("Refine the selection's whole edge from the image")).clicked() {
+            edit = Some(json!({"tool": "hair", "sampleAllLayers": w.sample_all}));
+        }
     }
     edit
+}
+
+/// The Preset row: pick one, delete it, or open a field that names the current settings.
+fn presets(ui: &mut egui::Ui, w: &mut SelectMaskWorkspace) {
+    let shown = w.current_preset().map(str::to_string);
+    let custom = String::new();
+    let mut current = shown.clone().unwrap_or_default();
+    let default = DEFAULT_PRESET.to_string();
+    let mut options: Vec<(String, &str)> = vec![(default.clone(), tl!("Default"))];
+    let names: Vec<String> = w.presets.keys().cloned().collect();
+    options.extend(names.iter().map(|n| (n.clone(), n.as_str())));
+    if shown.is_none() {
+        options.push((custom, tl!("Custom")));
+    }
+    ui.horizontal(|ui| {
+        ui.label(tl!("Preset"));
+        if widgets::dropdown_literal(ui, "sm-preset", tl!("Preset"), &mut current, &options, 170.0) && !current.is_empty() {
+            w.error = w.load_preset(&current).err();
+        }
+        if crate::icons::button(ui, "plus", 26.0, w.preset_name.is_some(), tl!("Save Preset…")).clicked() {
+            w.preset_name = if w.preset_name.is_some() { None } else { Some(String::new()) };
+        }
+        let saved = shown.filter(|n| *n != DEFAULT_PRESET);
+        let delete = ui.add_enabled_ui(saved.is_some(), |ui| crate::icons::button(ui, "minus", 26.0, false, tl!("Delete")));
+        if delete.inner.clicked()
+            && let Some(name) = saved
+        {
+            w.error = w.delete_preset(&name).err();
+        }
+    });
+    let Some(mut name) = w.preset_name.take() else { return };
+    let mut open = true;
+    ui.horizontal(|ui| {
+        widgets::text_field(ui, egui::Id::new("sm-preset-name"), &mut name, tl!("Preset Name"), 170.0, false);
+        if widgets::secondary_button(ui, tl!("Save"), 0.0).clicked() {
+            w.error = w.save_preset(&name).err();
+            open = w.error.is_some();
+        }
+    });
+    w.preset_name = open.then_some(name);
 }
 
 /// The Properties panel. Returns the tool edit its buttons made (Clear Selection, Invert).
 fn properties(ui: &mut egui::Ui, w: &mut SelectMaskWorkspace, t: &Tokens) -> Option<Value> {
     let mut edit = None;
     ui.spacing_mut().item_spacing.y = 6.0;
+    presets(ui, w);
     widgets::checkbox(ui, &mut w.opts.remember, tl!("Remember Settings"));
     widgets::hairline(ui);
     section(ui, "sm-view", tl!("View Mode"), |ui| {
@@ -1901,6 +2041,7 @@ fn canvas_input(
 
 /// Draws the workspace (a full-window layer over the app).
 pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
+    store_presets(app);
     follow_revision(app);
     upload(app, ctx);
     let title = app.distort.select_mask.as_ref().map(|w| {

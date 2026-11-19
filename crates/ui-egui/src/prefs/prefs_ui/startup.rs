@@ -48,6 +48,7 @@ pub fn load(app: &mut PhotocraftApp) {
     crate::last_brush::restore(app);
     sync_rulers(app);
     crate::tool_memory::restore(app);
+    crate::contextual_taskbar::restore(app);
     crate::view_cmds::restore(app);
     app.sync_recent();
     app.prefs_rt.saved_rev = app.session.prefs.rev();

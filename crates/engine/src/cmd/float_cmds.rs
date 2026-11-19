@@ -373,7 +373,7 @@ fn keeps_floating(id: &str) -> bool {
             | "brush.mixer.sample"
             | "brush.mixer.load"
             | "brush.mixer.clean"
-    ) || ["view.", "window.", "help.", "prefs."].iter().any(|p| id.starts_with(p))
+    ) || ["view.", "window.", "help.", "prefs.", "models."].iter().any(|p| id.starts_with(p))
 }
 
 /// Before any command (`Session::dispatch`): Undo puts a floating piece back (and is used up:

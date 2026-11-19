@@ -351,6 +351,9 @@ impl PhotocraftApp {
                 }
             }
         }
+        if !home {
+            crate::contextual_taskbar::show(self, &ctx);
+        }
         // The floating editor windows belong to the editor: Home covers them (dialogs and notices
         // below stay).
         if !home {
@@ -394,6 +397,7 @@ impl PhotocraftApp {
         // remembered once the pointer is up. Here, after every panel, rather than in the
         // picker's own code: the control channel can set it while the picker is closed.
         brush_picker::persist(self, &ctx);
+        crate::contextual_taskbar::persist(self, &ctx);
         // The tool's brush (settings and tip references) is remembered the same way. Like the
         // picker's view, in the frame loop, so the control channel can set it with the panels
         // closed; the engine's revision counter keeps an unchanged brush free.

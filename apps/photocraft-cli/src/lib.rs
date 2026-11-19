@@ -26,6 +26,17 @@ pub(crate) use error::{CliError, Result};
 
 /// The command line's clap definition, for generating shell completions and man pages
 /// (`examples/man-and-completions.rs`).
+/// Only explicit, trusted CLI invocations receive a model-cache capability. MCP sessions keep
+/// their existing filesystem authority; merely starting the CLI never downloads a model.
+pub(crate) fn local_headless() -> photocraft_automation::Headless {
+    let mut h = photocraft_automation::Headless::trusted_local();
+    #[cfg(all(feature = "local-ml", not(target_arch = "wasm32")))]
+    if let Some(dir) = std::env::var_os("PHOTOCRAFT_MODEL_DIR") {
+        h.session.configure_local_models(dir.into());
+    }
+    h
+}
+
 pub fn command() -> clap::Command {
     args::Cli::command()
 }

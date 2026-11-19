@@ -39,6 +39,7 @@ pub fn inspect(app: &PhotocraftApp, ctx: &egui::Context) -> Value {
         "tool": app.ui.tool,
         "toolOptions": app.ui.tool_options,
         "artboardTool": app.ui.artboard_tool,
+        "contextualTaskbar": app.ui.contextual_taskbar,
         "perspectiveCrop": app.ui.perspective_crop,
         "strokeEditor": app.ui.stroke_editor,
         "magnetic": app.ui.magnetic,

@@ -146,6 +146,60 @@ fn buttons_and_reset() {
     assert_eq!((d["edits"].as_u64(), d["settings"]["radius"].as_f64()), (Some(3), Some(12.0)));
 }
 
+/// Refine Hair is one undoable edit, and the same edit reaches OK.
+#[test]
+fn refine_hair_is_an_edit() {
+    let mut app = app_with_selection();
+    open(&mut app).unwrap();
+    ui(&mut app, json!({"refineHair": true}));
+    assert_eq!(ws(&app).edits.last().and_then(|e| e["tool"].as_str()), Some("hair"));
+    assert_eq!(commit_params(ws(&app))["edits"][0]["tool"], "hair");
+    let d = ui(&mut app, json!({"undo": true}));
+    assert_eq!(d["edits"].as_u64(), Some(0));
+}
+
+/// A preset names the settings, survives closing the workspace, and undoes like any change.
+#[test]
+fn presets_save_load_delete_and_undo() {
+    let mut app = app_with_selection();
+    open(&mut app).unwrap();
+    assert_eq!(ui(&mut app, json!({}))["preset"], "Default");
+    let d = ui(&mut app, json!({"radius": 12, "smooth": 30, "output": "newLayer"}));
+    assert!(d["preset"].is_null(), "no preset matches");
+    let d = ui(&mut app, json!({"savePreset": "  Portraits "}));
+    assert_eq!((d["preset"].as_str(), d["presets"][0].as_str()), (Some("Portraits"), Some("Portraits")));
+    let d = ui(&mut app, json!({"preset": "Default"}));
+    assert_eq!((d["settings"]["radius"].as_f64(), d["settings"]["output"].as_str()), (Some(0.0), Some("selection")));
+    let d = ui(&mut app, json!({"undo": true}));
+    assert_eq!((d["settings"]["radius"].as_f64(), d["preset"].as_str()), (Some(12.0), Some("Portraits")));
+    ui(&mut app, json!({"view": "blackWhite", "preset": "Default"}));
+
+    // A later workspace has it, and loading it leaves the view alone.
+    cancel(&mut app);
+    open(&mut app).unwrap();
+    let d = ui(&mut app, json!({"view": "onBlack", "preset": "Portraits"}));
+    assert_eq!((d["settings"]["smooth"].as_f64(), d["settings"]["view"].as_str()), (Some(30.0), Some("onBlack")));
+    let d = ui(&mut app, json!({"deletePreset": "Portraits"}));
+    assert_eq!(d["presets"].as_array().map(Vec::len), Some(0));
+}
+
+/// A preset needs a usable name, and unknown names change nothing.
+#[test]
+fn bad_preset_requests_are_refused() {
+    let mut app = app_with_selection();
+    open(&mut app).unwrap();
+    let call = |app: &mut PhotocraftApp, v: Value| control(app, &v);
+    for bad in [json!({"savePreset": "   "}), json!({"savePreset": "Default"}), json!({"savePreset": "x".repeat(65)}), json!({"preset": "none"}), json!({"deletePreset": "none"})] {
+        assert!(call(&mut app, bad.clone()).is_err(), "{bad}");
+    }
+    for i in 0..MAX_PRESETS {
+        call(&mut app, json!({"savePreset": format!("p{i}")})).unwrap();
+    }
+    assert!(call(&mut app, json!({"savePreset": "one more"})).is_err());
+    call(&mut app, json!({"savePreset": "p0"})).expect("replacing one is no new preset");
+    assert_eq!(ws(&app).presets.len(), MAX_PRESETS);
+}
+
 /// OK runs `select.refineEdge` with the edits, strokes and settings: one history step, the same
 /// result as the command with those params, and the workspace closes.
 #[test]
@@ -576,7 +630,7 @@ fn renders_photoshops_layout() {
     ] {
         assert!(h.query_by_label_contains(label).is_some(), "{label} is shown");
     }
-    assert!(h.get_by_label("Refine Hair").accesskit_node().is_disabled(), "Refine Hair is greyed out");
+    assert!(!h.get_by_label("Refine Hair").accesskit_node().is_disabled(), "Refine Hair can be used");
     h.get_by_label("Brush Tool (B)").click();
     h.run_steps(2);
     assert_eq!(h.state().distort.select_mask.as_ref().map(|w| w.tool), Some(SmTool::Brush));
@@ -649,7 +703,7 @@ fn panning_shows_the_hand() {
     assert_eq!(h.output().platform_output.cursor_icon, egui::CursorIcon::Grab);
 }
 
-/// The greyed Object Aware and Refine Hair say why they can't be used.
+/// The greyed Object Aware says why it can't be used, and Refine Hair is live.
 #[test]
 fn greyed_controls_explain_themselves() {
     let mut app = app_with_selection();
@@ -666,7 +720,8 @@ fn greyed_controls_explain_themselves() {
     );
     PhotocraftApp::setup_context(&h.ctx, crate::theme::ThemeKind::ALL[0]);
     h.run_steps(4);
-    for (label, why) in [("Object Aware", "segmentation model"), ("Refine Hair", "hair detection")] {
+    assert!(!h.get_by_label("Refine Hair").accesskit_node().is_disabled());
+    for (label, why) in [("Object Aware", "segmentation model")] {
         assert!(h.get_by_label(label).accesskit_node().is_disabled(), "{label} is greyed");
         assert!(h.query_by_label_contains(why).is_none(), "{label}: no tooltip before hovering");
         let at = h.get_by_label(label).rect().center();

@@ -15,7 +15,7 @@ pub fn body(app: &mut PhotocraftApp, ui: &mut egui::Ui, f: &mut Map<String, Valu
             f.insert("__gpuInfo".into(), json!(info));
             f.insert("__gpuAdapters".into(), json!(app.perf.gpu_info.adapters));
             let system = system_theme(app, ui.ctx());
-            prefs_body(ui, f, system);
+            prefs_body(app, ui, f, system);
         }
         "shortcuts" => shortcuts_body(app, ui, f),
         "presets" => presets_body(app, ui, f),
@@ -30,6 +30,8 @@ pub fn body(app: &mut PhotocraftApp, ui: &mut egui::Ui, f: &mut Map<String, Valu
 pub(super) fn humanize(key: &str) -> String {
     match key {
         "appearanceMode" => return "Appearance Mode".into(),
+        "subjectModel" => return "Subject / background removal".into(),
+        "objectModel" => return "Object selection".into(),
         "exrAcesCg" => return "Open color-less EXR as ACEScg".into(),
         "darkTheme" => return "Dark Theme".into(),
         "lightTheme" => return "Light Theme".into(),
@@ -109,6 +111,11 @@ pub(super) fn choice_label(v: &str) -> String {
         "windowsInk" => "Windows Ink (default)".into(),
         "winTab" => "WinTab".into(),
         "exr" => "EXR".into(),
+        "classical" => "Classical (built in)".into(),
+        "isnet-general-use" => "ISNet".into(),
+        "birefnet-lite" => "BiRefNet Lite".into(),
+        "birefnet-hr-matting" => "BiRefNet HR Matting".into(),
+        "sam2.1-large" => "SAM 2.1 Large".into(),
         "cm" => "Centimeters".into(),
         "mm" => "Millimeters".into(),
         "75" | "80" | "85" | "90" | "95" | "100" | "105" | "110" | "115" | "120" | "125" | "150" | "175" | "200" | "250" | "300" => format!("{v}%"),
@@ -179,8 +186,12 @@ pub(super) fn preference_sections(values: &Value, search: &str) -> Vec<(&'static
 }
 
 /// Preferences: section list on the left, the section's settings on the right.
-fn prefs_body(ui: &mut egui::Ui, f: &mut Map<String, Value>, system: Option<egui::Theme>) {
+fn prefs_body(app: &mut PhotocraftApp, ui: &mut egui::Ui, f: &mut Map<String, Value>, system: Option<egui::Theme>) {
     let t = Tokens::get(ui.ctx());
+    let status = app.session.local_model_status();
+    let installed: Vec<String> =
+        status["models"].as_array().into_iter().flatten().filter(|m| m["installed"] == true).filter_map(|m| m["id"].as_str().map(str::to_string)).collect();
+    ui.ctx().data_mut(|d| d.insert_temp(installed_models_key(), installed));
     let mut section = f.get("section").and_then(Value::as_str).unwrap_or("general").to_string();
     let mut values = f.get("values").cloned().unwrap_or(Value::Null);
     // The dialog follows the language being edited, so a change shows before OK.
@@ -252,6 +263,9 @@ fn prefs_body(ui: &mut egui::Ui, f: &mut Map<String, Value>, system: Option<egui
                     ui.label(RichText::new(tl!("These settings aren't available in PhotoCraft yet.")).color(t.text_faint));
                 } else if let Some(obj) = values.get_mut(&section).and_then(Value::as_object_mut) {
                     section_fields(ui, &section, obj, &order, lang, system, filter);
+                    if section == "integrations" && prefs::NATIVE_MODELS {
+                        local_model_rows(app, ui, obj);
+                    }
                     if section == "fileHandling" {
                         ui.label(
                             RichText::new(tl!("0 turns this threshold off; SVG groups nested deeper than 100 levels are always rasterized."))
@@ -447,6 +461,83 @@ pub(super) fn section_fields(
     egui::Grid::new(("prefs-grid", section)).num_columns(2).spacing([14.0, 7.0]).show(ui, |ui| field_rows(ui, section, obj, keys, lang));
 }
 
+/// Whether a model preference offers `option`: the built-in methods always do, and a model does
+/// once it is downloaded, or while it is the saved choice, so opening the dialog changes nothing.
+pub(super) fn model_option_shown(path: &str, option: &str, current: &str, installed: &[String]) -> bool {
+    !matches!(path, "integrations.subjectModel" | "integrations.objectModel")
+        || matches!(option, "auto" | "classical")
+        || option == current
+        || installed.iter().any(|id| id == option)
+}
+
+fn installed_models_key() -> egui::Id {
+    egui::Id::unique("prefs-installed-models")
+}
+
+/// The catalogue and lifecycle come from the engine. Downloads and removals are immediate jobs;
+/// model choices are preferences, committed by the dialog's existing Apply/OK controls.
+fn local_model_rows(app: &mut PhotocraftApp, ui: &mut egui::Ui, obj: &mut Map<String, Value>) {
+    // The Preferences grid can leave a wider layout than its visible scroll area. Bound this
+    // child to the clip rectangle so long translations wrap inside the actual dialog.
+    let width = ui.available_width().min((ui.clip_rect().right() - ui.next_widget_position().x - 8.0).max(1.0));
+    ui.scope(|ui| {
+        ui.set_max_width(width);
+        local_model_rows_inner(app, ui, obj);
+    });
+}
+
+fn local_model_rows_inner(app: &mut PhotocraftApp, ui: &mut egui::Ui, obj: &mut Map<String, Value>) {
+    let t = Tokens::get(ui.ctx());
+    let status = app.session.local_model_status();
+    let available = status["available"].as_bool().unwrap_or(false);
+    ui.add_space(10.0);
+    ui.label(RichText::new(tl!("Local selection models")).font(crate::theme::semibold(12.5)).color(t.text));
+    ui.add(egui::Label::new(RichText::new(tl!("Models run on this device. Images stay on this device.")).color(t.text_dim)).wrap());
+    ui.add(egui::Label::new(RichText::new(tl!("Download a model before choosing it. Downloads do not change the current method.")).color(t.text_dim)).wrap());
+    if !available {
+        ui.add(egui::Label::new(RichText::new(tl!("Local models aren't available in this build or session.")).color(t.text_faint)).wrap());
+    }
+    ui.add_space(6.0);
+    for model in status["models"].as_array().into_iter().flatten() {
+        let id = model["id"].as_str().unwrap_or_default();
+        let label = model["label"].as_str().unwrap_or_default();
+        let installed = model["installed"].as_bool().unwrap_or(false);
+        let busy = model["busy"].as_bool().unwrap_or(false);
+        let mib = model["downloadBytes"].as_u64().unwrap_or(0).div_ceil(1024 * 1024);
+        ui.push_id(id, |ui| {
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(label).color(t.text));
+                let state = if busy {
+                    tl!("In use…")
+                } else if installed {
+                    tl!("Downloaded")
+                } else {
+                    tl!("Not downloaded")
+                };
+                ui.label(RichText::new(state).color(t.text_faint));
+            });
+            ui.add(egui::Label::new(RichText::new(tl!(model["purpose"].as_str().unwrap_or_default())).color(t.text_dim)).wrap());
+            ui.horizontal(|ui| {
+                let button = if installed { tl!("Remove download").to_string() } else { format!("{} ({mib} MiB)", tl!("Download")) };
+                let clicked = ui.add_enabled_ui(available && !busy, |ui| crate::widgets::secondary_button(ui, &button, 190.0).clicked()).inner;
+                if clicked {
+                    let command = if installed { "models.remove" } else { "models.download" };
+                    if app.run(command, json!({"id": id})).is_ok() && installed {
+                        let (pref, fallback) = if id == "sam2.1-large" { ("objectModel", "classical") } else { ("subjectModel", "auto") };
+                        if obj.get(pref).and_then(Value::as_str) == Some(id) {
+                            obj.insert(pref.into(), json!(fallback));
+                        }
+                    }
+                }
+                ui.hyperlink_to(model["license"].as_str().unwrap_or_default(), model["upstream"].as_str().unwrap_or_default());
+                ui.hyperlink_to(tl!("Model details"), model["exportSource"].as_str().unwrap_or_default());
+            });
+            ui.add_space(8.0);
+        });
+    }
+    ui.add(egui::Label::new(RichText::new(tl!("Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.")).color(t.text_faint)).wrap());
+}
+
 /// One grid row per setting in `keys` (already filtered by `field_visible`).
 fn field_rows(ui: &mut egui::Ui, section: &str, obj: &mut Map<String, Value>, keys: Vec<String>, lang: crate::i18n::Lang) {
     let t = Tokens::get(ui.ctx());
@@ -491,7 +582,8 @@ fn field_rows(ui: &mut egui::Ui, section: &str, obj: &mut Map<String, Value>, ke
             }
             Value::String(s) if prefs::choices(&path).is_some() => {
                 ui.label(RichText::new(tl!(&label)).color(t.text_dim));
-                let opts = prefs::choices(&path).unwrap_or(&[]);
+                let installed = ui.ctx().data(|d| d.get_temp::<Vec<String>>(installed_models_key())).unwrap_or_default();
+                let opts: Vec<&str> = prefs::choices(&path).unwrap_or(&[]).iter().copied().filter(|o| model_option_shown(&path, o, s, &installed)).collect();
                 let labels: Vec<String> = opts.iter().map(|o| choice_label(o)).collect();
                 let pairs: Vec<(String, &str)> = opts.iter().map(|o| o.to_string()).zip(labels.iter().map(String::as_str)).collect();
                 let mut cur = s.clone();

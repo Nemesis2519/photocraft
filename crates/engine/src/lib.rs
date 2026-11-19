@@ -83,6 +83,7 @@ pub use cmd::color_to_alpha_cmds;
 pub use cmd::comps_cmds;
 pub use cmd::contour_lib_cmds;
 pub use cmd::cutout_cmds;
+pub use cmd::model_cmds;
 pub use cmd::distort_cmds;
 pub use cmd::document_preset_cmds;
 pub use cmd::edit_cmds;
@@ -315,6 +316,9 @@ pub struct Session {
     /// Each open document's linked smart objects' files that were not there when last looked at
     /// ([`Session::missing_links`]).
     link_missing: std::collections::HashSet<(u64, String)>,
+    /// Optional native model service, injected by a platform frontend. An ordinary/test/web
+    /// session has none: creating a Session never downloads models or accesses a model directory.
+    pub model_backend: Option<Arc<dyn photocraft_ml::InferenceBackend>>,
     /// Select Subject's last result, reused while the pixels are unchanged (#2865).
     subject_cache: smartselect_cmds::SubjectCache,
     /// Object Selection's Object Finder results (#4087), shared by the hover preview and the

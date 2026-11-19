@@ -8,6 +8,11 @@ license.workspace = true
 workspace = true
 
 [features]
+# Optional local models, tried on the GPU routes the build enables, then the CPU.
+local-ml = ["photocraft-ml/onnx"]
+local-ml-directml = ["local-ml", "photocraft-ml/directml"]
+local-ml-cuda = ["local-ml", "photocraft-ml/cuda"]
+local-ml-coreml = ["local-ml", "photocraft-ml/coreml"]
 # Real-file corpus tests (opt-in; `cargo xtask test-corpus`). Fail when the corpus is missing.
 corpus = []
 
@@ -27,6 +32,7 @@ chrono = { workspace = true }
 web-time = { workspace = true }
 photocraft-paint = { workspace = true }
 photocraft-algo = { workspace = true }
+photocraft-ml = { workspace = true }
 photocraft-text = { workspace = true }
 photocraft-vector = { workspace = true }
 photocraft-io = { workspace = true }

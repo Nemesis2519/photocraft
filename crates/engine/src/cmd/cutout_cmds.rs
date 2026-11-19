@@ -19,10 +19,13 @@ const CMD: &str = "layer.removeBackground";
 /// edges and hair get partial coverage instead of a hard cut.
 const REFINE: RefineParams = RefineParams { radius: 2.0, smart_radius: true, smooth: 10.0, feather: 0.5, contrast: 10.0, shift_edge: 0.0 };
 
-/// Remove Background needs an unlocked pixel layer.
+/// Remove Background needs an unlocked pixel layer or a rendered Smart Object.
 fn check(doc: &Document, l: &Layer) -> std::result::Result<(), String> {
-    if !matches!(l.content, LayerContent::Raster(_)) {
+    if !matches!(l.content, LayerContent::Raster(_) | LayerContent::Smart(_)) {
         return Err(format!("the layer is {} {} layer, not a pixel layer", l.content.article(), l.content.kind_name()));
+    }
+    if l.surface().is_none() {
+        return Err("the Smart Object has no rendered image; render it before removing the background".into());
     }
     let locks = doc.effective_locks(l.id);
     if locks.pixels || locks.all {
@@ -55,20 +58,35 @@ fn run(s: &mut Session, p: &Value) -> Result<Value> {
     let sample_all = p.get("sampleAllLayers").and_then(Value::as_bool).unwrap_or(false);
     let refine = p.get("refine").and_then(Value::as_bool).unwrap_or(true);
     let area = subject_area(layer, doc.bounds(), sample_all);
+    let model = crate::model_cmds::subject_model(s, p)?;
+    let backend = model.map(|_| crate::model_cmds::backend(s)).transpose()?;
+    let device = backend.clone();
     crate::jobs::edit_job(
         s,
         "Remove Background",
         move |doc, _, ctx| {
-            // Cancel reaches the min cuts inside Select Subject, so Esc doesn't wait for them.
-            let found = ctx
-                .stage(0.1, 0.6, "Finding subject", |ctl| with_doc_sampler(doc, Some(id), sample_all, |smp, _| subject::select_subject_with(smp, area, ctl)))
-                .map_err(|_| EngineError::Cancelled)?;
+            let found = match (model, backend.as_ref()) {
+                (Some(model), Some(backend)) => {
+                    ctx.progress(0.1, "Finding subject");
+                    with_doc_sampler(doc, Some(id), sample_all, |smp, d| {
+                        crate::model_cmds::infer_region(backend.as_ref(), model, smp, d, area, photocraft_ml::Prompt::Subject, ctx)
+                    })?
+                }
+                // Cancel reaches the min cuts inside Select Subject, so Esc doesn't wait for them.
+                _ => ctx
+                    .stage(0.1, 0.6, "Finding subject", |ctl| {
+                        with_doc_sampler(doc, Some(id), sample_all, |smp, _| subject::select_subject_with(smp, area, ctl))
+                    })
+                    .map_err(|_| EngineError::Cancelled)?,
+            };
             let region = found.ok_or_else(|| EngineError::Other("no subject found".into()))?;
             let mut surface = matting::region_surface(&region);
             if ctx.cancelled() {
                 return Err(EngineError::Cancelled);
             }
-            if refine {
+            // A matting model already gives soft alpha. Classical edge refinement would threshold
+            // or change those opacities, so it applies only to the classical selector.
+            if refine && model.is_none() {
                 let refined = ctx.stage(0.6, 0.95, "Refining edge", |interrupt| {
                     with_doc_sampler(doc, Some(id), sample_all, |smp, _| matting::refine_surface_with_interrupt(smp, &surface, area, &REFINE, None, interrupt))
                 });
@@ -84,7 +102,7 @@ fn run(s: &mut Session, p: &Value) -> Result<Value> {
             let b = surface.content_bounds();
             Ok([b.x0, b.y0, b.width() as i32, b.height() as i32])
         },
-        move |bounds| json!({ "layer": id.0, "bounds": bounds }),
+        move |bounds| json!({ "layer": id.0, "bounds": bounds, "model": model.map_or("classical", |m| m.name()), "device": device.as_ref().and_then(|d| d.last_device()) }),
     )
 }
 
@@ -95,12 +113,15 @@ pub fn specs() -> Vec<CommandSpec> {
         label: "Remove Background",
         menu: &[],
         shortcut: None,
-        params: r##"{"layer":id?,"sampleAllLayers":bool=false,"refine":bool=true} → {layer,bounds} (adds a layer mask from Select Subject; the Background becomes a normal layer)"##,
+        params: r##"{"layer":id?,"sampleAllLayers":bool=false,"refine":bool=true,"model":"auto|classical|birefnet-lite|isnet-general-use|birefnet-hr-matting"?} → {layer,bounds,model} (adds a layer mask from Select Subject; the Background becomes a normal layer)"##,
         enabled,
         run,
         journal: true,
     }]
 }
+
+#[cfg(test)]
+mod smart_tests;
 
 #[cfg(test)]
 mod tests {

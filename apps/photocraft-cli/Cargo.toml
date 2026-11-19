@@ -7,6 +7,11 @@ license.workspace = true
 build = "build.rs"
 
 [features]
+# Optional local models: `local-ml` runs them on the CPU, and each route below adds a GPU.
+local-ml = ["photocraft-engine/local-ml"]
+local-ml-directml = ["local-ml", "photocraft-engine/local-ml-directml"]
+local-ml-cuda = ["local-ml", "photocraft-engine/local-ml-cuda"]
+local-ml-coreml = ["local-ml", "photocraft-engine/local-ml-coreml"]
 default = ["gpu"]
 # Open HEIC/HEIF photos (the optional craft-heif crate). Not default so distributors choose
 # it; official builds (CI, packaging/, release) build with `--features heif`.

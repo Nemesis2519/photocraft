@@ -643,12 +643,18 @@ struct PanelSet {
     dock_tabs: Option<crate::state::DockTabs>,
     dock: Option<crate::dock::DockLayout>,
     color_panel: Option<crate::state::ColorPanelState>,
+    contextual_taskbar: Option<crate::contextual_taskbar::TaskbarState>,
     dock_width: Option<f64>,
 }
 
 impl PanelSet {
     fn parse(app: &PhotocraftApp, p: &Value) -> std::result::Result<Self, String> {
+        let contextual_taskbar = merged_object(&app.ui.contextual_taskbar, p.get("contextualTaskbar"), "contextualTaskbar")?;
+        if contextual_taskbar.as_ref().and_then(|bar| bar.position).is_some_and(|p| p.iter().any(|v| !v.is_finite() || !(0.0..=1.0).contains(v))) {
+            return Err("contextualTaskbar.position must be two finite numbers in 0..1, or null".into());
+        }
         Ok(Self {
+            contextual_taskbar,
             // The Histogram panel: its options, the dragged tonal range ([from, to] levels or
             // null) and Uncached Refresh.
             histogram_panel: merged_object(&app.ui.histogram_panel, p.get("histogramPanel"), "histogramPanel")?,
@@ -734,6 +740,9 @@ impl PanelSet {
 
     /// Applies the Color panel state and queues the requested end-dock width for the next frame.
     fn apply_color_and_width(&mut self, app: &mut PhotocraftApp, ctx: &egui::Context) {
+        if let Some(v) = self.contextual_taskbar.take() {
+            app.ui.contextual_taskbar = v;
+        }
         if let Some(v) = self.color_panel.take() {
             app.ui.color_panel = v;
         }

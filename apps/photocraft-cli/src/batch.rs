@@ -79,6 +79,8 @@ pub(crate) fn batch(a: &BatchArgs, out: &mut dyn Write, err: &mut dyn Write) -> 
         images
     };
     let (mut ok, mut failed) = (0, 0);
+    // Keep the model resident across files instead of loading it again for each image.
+    let model_backend = crate::local_headless().session.model_backend;
     // `--format .jpg` names outputs `<stem>.jpg`, as `--format jpg` does (#490).
     let format = a.export.format.as_deref().map(|f| f.strip_prefix('.').unwrap_or(f));
     let named = photocraft_engine::file_cmds::plan_batch_names(
@@ -119,6 +121,7 @@ pub(crate) fn batch(a: &BatchArgs, out: &mut dyn Write, err: &mut dyn Write) -> 
         // same format `--naming`'s {ext} plans.
         let ext = format.map_or_else(|| photocraft_engine::file_cmds::batch_same_format(&input.to_string_lossy()), str::to_owned);
         let mut h = Headless::trusted_local();
+        h.session.model_backend = model_backend.clone();
         h.set_renderer(renderer.take());
         let r = (|| -> Result<Vec<String>> {
             if let Some(parent) = target.parent() {

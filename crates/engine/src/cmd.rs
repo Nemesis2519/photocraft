@@ -117,6 +117,7 @@ pub mod magnetic_cmds;
 pub mod mask_view_cmds;
 pub(super) mod migrate_cmds;
 pub mod mode_cmds;
+pub mod model_cmds;
 pub mod multichannel_cmds;
 pub mod notes_cmds;
 #[cfg(test)]
@@ -1361,6 +1362,7 @@ fn build() -> Vec<CommandSpec> {
     v.extend(crate::path_edit_cmds::specs());
     v.extend(crate::smartselect_cmds::specs());
     v.extend(crate::cutout_cmds::specs());
+    v.extend(crate::model_cmds::specs());
     v.extend(crate::symmetry_cmds::specs());
     v.extend(crate::edit_cmds::specs());
     v.extend(crate::smart_svg_cmds::specs());

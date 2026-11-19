@@ -229,10 +229,14 @@ pub fn morph(src: &[f32], w: usize, h: usize, r: usize, grow: bool) -> Vec<f32> 
     morphology::morph(src, w, h, r, grow)
 }
 
+pub mod band;
 mod brush;
+mod hair;
 mod morphology;
+pub mod shared_sampling;
 
 pub use brush::{EdgeBrush, EdgeStroke, MAX_SWEPT_AREA, SIZE_RANGE as BRUSH_SIZE_RANGE, brush_surface, painted_tiles, stroke_area, swept_area};
+pub use hair::refine_hair;
 
 /// Running max (or min) over a window of radius `r` (edge-clipped), van Herk / Gil–Werman:
 /// three comparisons per sample whatever the radius.

@@ -830,6 +830,10 @@ fn invoke_window_command(app: &mut PhotocraftApp, ctx: &egui::Context, id: &str)
             }
         }
         "window.togglePanels" => Some(toggle_panels(app)),
+        "window.contextualTaskbar" => {
+            app.ui.contextual_taskbar.visible = !app.ui.contextual_taskbar.visible;
+            Some(Ok(serde_json::Value::Null))
+        }
         "window.nextDocument" | "window.previousDocument" => Some((|| {
             let count = app.session.documents().len();
             let active = app.session.active_index().ok_or("no document open")?;

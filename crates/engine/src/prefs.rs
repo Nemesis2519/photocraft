@@ -533,7 +533,7 @@ pub use shortcuts::{
 };
 use store::read_lenient;
 pub use store::{InvalidPref, PREFS_VERSION, PrefsStore, read_section};
-pub use validate::{HIDDEN_UNTIL_IMPLEMENTED, LINUX_ONLY, SECTIONS, choices, gpu_adapter_matches, is_color, is_hidden, parse_hex, range};
+pub use validate::{HIDDEN_UNTIL_IMPLEMENTED, LINUX_ONLY, LOCAL_ML_ONLY, NATIVE_MODELS, SECTIONS, choices, gpu_adapter_matches, is_color, is_hidden, parse_hex, range};
 use validate::{check_value, get_path, keyed, set_path};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -1169,6 +1169,9 @@ impl Default for RawDefaults {
     }
 }
 
+choice!(SubjectModel { Auto = "auto", Classical = "classical", BiRefNetLite = "birefnet-lite", IsNet = "isnet-general-use", BiRefNet = "birefnet-hr-matting" } default Auto);
+choice!(ObjectModel { Classical = "classical", Sam2 = "sam2.1-large" } default Classical);
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Integrations {
@@ -1176,11 +1179,14 @@ pub struct Integrations {
     pub allow_agent_control: bool,
     /// Default control port (0 = only when `--control` is given).
     pub control_port: u32,
+    /// Optional, downloaded local model; classical selection is what runs without one.
+    pub subject_model: SubjectModel,
+    pub object_model: ObjectModel,
 }
 
 impl Default for Integrations {
     fn default() -> Self {
-        Self { allow_agent_control: true, control_port: 0 }
+        Self { allow_agent_control: true, control_port: 0, subject_model: SubjectModel::Auto, object_model: ObjectModel::Classical }
     }
 }
 
@@ -1381,6 +1387,8 @@ pub struct Preferences {
     /// differ from their defaults, saved as the user changes them and restored at launch, as
     /// Photoshop remembers each tool's options between sessions. JSON owned by the shell.
     pub tool_options: Value,
+    /// The contextual task bar's visibility and viewport-relative position. JSON owned by the shell.
+    pub contextual_taskbar: Value,
     /// Each painting tool's own brush (the Brush, the Eraser, the retouching tools…; see the
     /// shell's `paint_mouse::sync_tool_brush`), saved as the user changes them and restored at
     /// launch, as Photoshop keeps every tool's brush between sessions (#6212): `{"owner": tool,
