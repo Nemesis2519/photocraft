@@ -4404,7 +4404,7 @@ shape	Appearance	Izgled
 	Remember Settings	Zapamti postavke
 	View Mode	Način prikaza
 	Object Aware needs a segmentation model, which isn't available yet	Svjesno objekata zahtijeva model segmentacije, koji još nije dostupan
-	Refine Hair needs hair detection, which isn't available yet	Poboljšaj kosu zahtijeva otkrivanje kose, koje još nije dostupno
+	Refine the selection's whole edge from the image	Poboljšaj cijelu ivicu selekcije na osnovu slike
 	Check for Updates…	Provjeri ažuriranja…
 	PhotoCraft Updates	PhotoCraft ažuriranja
 	Checking for updates…	Provjera ažuriranja…
@@ -4613,3 +4613,23 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Odaberite drugi dokument za svaki kanal.
 	A picked document is no longer open.	Jedan odabrani dokument više nije otvoren.
 	A picked document is no longer a grayscale document of the same size.	Jedan odabrani dokument više nije dokument u nijansama sive iste veličine.
+	Contextual Task Bar	Kontekstualna traka zadataka
+	Drag contextual task bar	Prevuci kontekstualnu traku zadataka
+	Reset position	Vrati položaj
+	Hide contextual task bar	Sakrij kontekstualnu traku zadataka
+	Contextual task bar options	Opcije kontekstualne trake zadataka
+	Hide the background with an editable layer mask.	Sakrij pozadinu maskom sloja koju možete uređivati.
+	Subject / background removal	Subjekt / uklanjanje pozadine
+	Object selection	Odabir objekta
+	Classical (built in)	Klasično (ugrađeno)
+	Download	Preuzmi
+	Download a model before choosing it. Downloads do not change the current method.	Preuzmite model prije nego što ga odaberete. Preuzimanja ne mijenjaju trenutnu metodu.
+	Downloaded	Preuzeto
+	In use…	U upotrebi…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Veliki modeli mogu potrajati i koristiti nekoliko GB memorije. Napredak i Otkaži prikazuju se u statusnoj traci.
+	Local models aren't available in this build or session.	Lokalni modeli nisu dostupni u ovoj verziji ili sesiji.
+	Local selection models	Lokalni modeli za odabir
+	Model details	Detalji modela
+	Models run on this device. Images stay on this device.	Modeli rade na ovom uređaju. Slike ostaju na ovom uređaju.
+	Not downloaded	Nije preuzeto
+	Remove download	Ukloni preuzimanje

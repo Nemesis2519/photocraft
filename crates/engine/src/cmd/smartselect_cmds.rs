@@ -284,9 +284,26 @@ fn object_selection(s: &mut Session, p: &Value) -> Result<Value> {
     if p.get("rect").is_none()
         && let Some(pt) = point_param(p)
     {
+        if crate::model_cmds::object_model(s, p)?.is_some() {
+            return Err(bad("select.object", "SAM Object Selection needs a rectangle; point clicks use the Classical Object Finder"));
+        }
         return object_at_point(s, p, pt);
     }
     let rect = rect_param(p).ok_or_else(|| bad("select.object", "needs \"rect\": [x, y, w, h] or \"point\": [x, y]"))?;
+    if let Some(id) = crate::model_cmds::object_model(s, p)? {
+        let canvas = s.active().ok_or(EngineError::NoDocument)?.doc.bounds();
+        let rect = rect.intersect(&canvas);
+        if rect.is_empty() {
+            return Err(bad("select.object", "box must overlap the canvas"));
+        }
+        let prompt = photocraft_ml::Prompt::Box([
+            (rect.x0 - canvas.x0) as f32 / canvas.width() as f32,
+            (rect.y0 - canvas.y0) as f32 / canvas.height() as f32,
+            (rect.x1 - canvas.x0) as f32 / canvas.width() as f32,
+            (rect.y1 - canvas.y0) as f32 / canvas.height() as f32,
+        ]);
+        return model_selection(s, p, id, prompt, "Object Selection");
+    }
     let all_layers = b(p, "sampleAllLayers", false);
     let d = s.active().ok_or(EngineError::NoDocument)?;
     check_sampled_pixels(&d.doc, d.active_layer, all_layers, rect)?;
@@ -319,7 +336,30 @@ impl SubjectCache {
     }
 }
 
+fn model_selection(s: &mut Session, p: &Value, id: photocraft_ml::ModelId, prompt: photocraft_ml::Prompt, label: &'static str) -> Result<Value> {
+    let backend = crate::model_cmds::backend(s)?;
+    let device = backend.clone();
+    let d = s.active().ok_or(EngineError::NoDocument)?;
+    let (doc, layer) = (d.doc.clone(), d.active_layer);
+    let (all, m) = (b(p, "sampleAllLayers", false), mode(p, "replace"));
+    crate::jobs::run(
+        s,
+        label,
+        true,
+        move |ctx| with_doc_sampler(&doc, layer, all, |smp, d| crate::model_cmds::infer_region(backend.as_ref(), id, smp, d, d.bounds(), prompt, ctx)),
+        move |s, region| {
+            let mut result = apply(s, label, region.as_ref(), m)?;
+            result["model"] = json!(id);
+            result["device"] = json!(device.last_device());
+            Ok(result)
+        },
+    )
+}
+
 fn select_subject(s: &mut Session, p: &Value) -> Result<Value> {
+    if let Some(id) = crate::model_cmds::subject_model(s, p)? {
+        return model_selection(s, p, id, photocraft_ml::Prompt::Subject, "Select Subject");
+    }
     // The selected layer's pixels; the composite only when no pixel layer is selected.
     let all_layers = b(p, "sampleAllLayers", false);
     let d = s.active().ok_or(EngineError::NoDocument)?;
@@ -443,12 +483,14 @@ fn refine_edge(s: &mut Session, p: &Value) -> Result<Value> {
     // Before anything is painted: a thin stroke across a huge canvas paints few pixels but many tiles.
     select_mask_edits::check_size(&edits, d.doc.bounds())?;
     select_mask_edits::check_strokes(&strokes, d.doc.bounds())?;
+    let subject = if edits.iter().any(|e| matches!(e, select_mask_edits::SelectionEdit::Subject { .. })) { select_mask_edits::subject_model(s)? } else { None };
+    let ctx = s.inline_job_ctx();
     let region = with_sampler(s, b(p, "sampleAllLayers", false), |smp, doc| {
         let mask_surf = active.and_then(|id| doc.layer(id)).and_then(|l| l.mask.as_ref()).map(|m| &m.surface);
         let target_mask = p.get("target").and_then(Value::as_str) == Some("mask");
         let start = if target_mask { mask_surf.or(doc.selection.as_ref()) } else { doc.selection.as_ref().or(mask_surf) };
         // The workspace's tool edits change the selection before its edge is refined.
-        let edited = if edits.is_empty() { None } else { select_mask_edits::apply(doc, active, start.cloned(), &edits) };
+        let edited = if edits.is_empty() { None } else { select_mask_edits::apply_using(doc, active, start.cloned(), &edits, subject.as_ref(), &ctx)? };
         let Some(sel) = (if edits.is_empty() { start } else { edited.as_ref() }) else { return Ok(None) };
         let brush = matting::EdgeBrush::new(&strokes, doc.bounds());
         matting::refine_surface(smp, sel, doc.bounds(), &params, brush.as_ref()).map_err(|e| EngineError::Other(e.to_string()))
@@ -542,7 +584,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "select.object",
             "Object Selection",
             [],
-            r##"{"rect":[x,y,w,h] | "point":[x,y],"mode":"replace|add|subtract|intersect"="replace","sampleAllLayers":bool=false} (point: the Object Finder's object under the point, as hovering previews it)"##,
+            r##"{"rect":[x,y,w,h] | "point":[x,y],"mode":"replace|add|subtract|intersect"="replace","sampleAllLayers":bool=false,"model":"classical|sam2.1-large"?} (point: the Object Finder's object under the point, as hovering previews it)"##,
             has_doc,
             object_selection
         ),
@@ -550,7 +592,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "select.subject",
             "Subject",
             ["Select"],
-            r##"{"sampleAllLayers":bool=false,"mode":"replace|add|subtract|intersect"="replace"} (samples the selected layer; the composite when no pixel layer is selected)"##,
+            r##"{"sampleAllLayers":bool=false,"mode":"replace|add|subtract|intersect"="replace","model":"auto|classical|birefnet-lite|isnet-general-use|birefnet-hr-matting"?} (samples the selected layer; the composite when no pixel layer is selected)"##,
             has_doc,
             select_subject
         ),
@@ -558,7 +600,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "select.refineEdge",
             "Refine Edge",
             [],
-            r##"{"radius":px=0,"smartRadius":bool=false,"smooth":0..100=0,"feather":px=0,"contrast":0..100=0,"shiftEdge":-100..100=0,"decontaminate":bool=false,"amount":0..100=100,"output":"selection|layerMask|newLayer|newLayerWithMask|newDocument|newDocumentWithMask"="selection","sampleAllLayers":bool=false,"refineStrokes":[{"points":[[x,y],…],"size":px=30,"mode":"add|subtract"="add"},…]=[],"edits":[{"tool":"quick","points":[[x,y],…],"size":px=30,"mode":"add|subtract"="add","sampleAllLayers":bool=false} | {"tool":"brush","points":[[x,y],…],"size":px=30,"hardness":0..100=100,"mode":"add|subtract"="add"} | {"tool":"lasso","points":[[x,y],…≥3],"mode":"add|subtract"="add"} | {"tool":"object","rect":[x,y,w,h] | "point":[x,y],"mode":"add|subtract"="add","sampleAllLayers":bool=false} | {"tool":"subject","mode":"replace|add|subtract"="replace","sampleAllLayers":bool=true} | {"tool":"clear"} | {"tool":"invert"},…]=[]} (refineStrokes: the Refine Edge Brush, in painting order: add refines the painted area from the image, subtract keeps the original edge there; edits: the workspace's Quick Selection, Brush, Lasso, Object Selection, Select Subject, Clear Selection and Invert, applied in order to the selection before its edge is refined)"##,
+            r##"{"radius":px=0,"smartRadius":bool=false,"smooth":0..100=0,"feather":px=0,"contrast":0..100=0,"shiftEdge":-100..100=0,"decontaminate":bool=false,"amount":0..100=100,"output":"selection|layerMask|newLayer|newLayerWithMask|newDocument|newDocumentWithMask"="selection","sampleAllLayers":bool=false,"refineStrokes":[{"points":[[x,y],…],"size":px=30,"mode":"add|subtract"="add"},…]=[],"edits":[{"tool":"quick","points":[[x,y],…],"size":px=30,"mode":"add|subtract"="add","sampleAllLayers":bool=false} | {"tool":"brush","points":[[x,y],…],"size":px=30,"hardness":0..100=100,"mode":"add|subtract"="add"} | {"tool":"lasso","points":[[x,y],…≥3],"mode":"add|subtract"="add"} | {"tool":"object","rect":[x,y,w,h] | "point":[x,y],"mode":"add|subtract"="add","sampleAllLayers":bool=false} | {"tool":"subject","mode":"replace|add|subtract"="replace","sampleAllLayers":bool=true} | {"tool":"hair","sampleAllLayers":bool=false} | {"tool":"clear"} | {"tool":"invert"},…]=[]} (refineStrokes: the Refine Edge Brush, in painting order: add refines the painted area from the image, subtract keeps the original edge there; edits: the workspace's Quick Selection, Brush, Lasso, Object Selection, Select Subject, Refine Hair, Clear Selection and Invert, applied in order to the selection before its edge is refined)"##,
             has_selection_or_mask,
             refine_edge
         ),

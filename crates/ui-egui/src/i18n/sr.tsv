@@ -4594,7 +4594,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Zapamti podešavanja
 	View Mode	Režim prikaza
 	Object Aware needs a segmentation model, which isn't available yet	Režim Prema objektu zahteva model segmentacije, koji još nije dostupan
-	Refine Hair needs hair detection, which isn't available yet	Doterivanje kose zahteva detekciju kose, koja još nije dostupna
+	Refine the selection's whole edge from the image	Poboljšaj celu ivicu selekcije na osnovu slike
 	Select and Mask was closed: its document is no longer the active one	Izaberi i maskiraj je zatvoren: njegov dokument više nije aktivan
 	Select and Mask was closed: another layer was selected	Izaberi i maskiraj je zatvoren: izabran je drugi sloj
 	Select Layer Under Cursor	Izaberi sloj ispod kursora
@@ -4651,3 +4651,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Izaberite drugi dokument za svaki kanal.
 	A picked document is no longer open.	Jedan izabrani dokument više nije otvoren.
 	A picked document is no longer a grayscale document of the same size.	Jedan izabrani dokument više nije dokument u nijansama sive iste veličine.
+	Contextual Task Bar	Kontekstualna traka zadataka
+	Drag contextual task bar	Prevucite kontekstualnu traku zadataka
+	Reset position	Vrati položaj
+	Hide contextual task bar	Sakrij kontekstualnu traku zadataka
+	Contextual task bar options	Opcije kontekstualne trake zadataka
+	Hide the background with an editable layer mask.	Sakrijte pozadinu pomoću maske sloja koja se može uređivati.
+	Subject / background removal	Subjekat / uklanjanje pozadine
+	Object selection	Izbor objekta
+	Classical (built in)	Klasično (ugrađeno)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Preuzmi
+	Download a model before choosing it. Downloads do not change the current method.	Preuzmite model pre izbora. Preuzimanje ne menja trenutnu metodu.
+	Downloaded	Preuzeto
+	In use…	U upotrebi…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Velikim modelima može trebati više vremena i nekoliko GB memorije. Napredak i Otkaži prikazuju se na statusnoj traci.
+	Local models aren't available in this build or session.	Lokalni modeli nisu dostupni u ovoj verziji ili sesiji.
+	Local selection models	Lokalni modeli za izbor
+	Model details	Detalji modela
+	Models run on this device. Images stay on this device.	Modeli rade na ovom uređaju. Slike ostaju na ovom uređaju.
+	Not downloaded	Nije preuzeto
+	Remove download	Ukloni preuzimanje
+	Select Subject and Remove Background; detailed, soft edges	Izbor subjekta i uklanjanje pozadine; detaljne, meke ivice
+	Object Selection; drag a box around the object	Izbor objekta; prevucite okvir oko objekta

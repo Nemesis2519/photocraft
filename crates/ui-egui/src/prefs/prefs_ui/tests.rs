@@ -2044,3 +2044,13 @@ fn reset_section_on_type_keeps_the_favourite_fonts() {
     assert_eq!(prefs.favorite_fonts, ["Bebas Neue"], "the favourites are kept");
     assert_eq!(stored(&store)["type"]["favoriteFonts"], json!(["Bebas Neue"]));
 }
+
+#[test]
+fn model_choices_list_only_what_can_run() {
+    let installed = vec!["isnet-general-use".to_string()];
+    let shown = |option, current| fields::model_option_shown("integrations.subjectModel", option, current, &installed);
+    assert!(shown("auto", "auto") && shown("classical", "auto") && shown("isnet-general-use", "auto"));
+    assert!(!shown("birefnet-lite", "auto"), "an undownloaded model cannot run");
+    assert!(shown("birefnet-lite", "birefnet-lite"), "a saved choice stays visible, so opening the dialog changes nothing");
+    assert!(fields::model_option_shown("general.colorPicker", "anything", "", &[]), "other preferences are not filtered");
+}

@@ -4331,7 +4331,7 @@ curves	Smooth	Tasoita
 	Real-Time Refinement	Reaaliaikainen tarkennus
 	Refine Edge Brush Tool	Reunan tarkennussivellintyökalu
 	Refine Hair	Tarkenna hiuksia
-	Refine Hair needs hair detection, which isn't available yet	Tarkenna hiuksia tarvitsee hiusten tunnistuksen, jota ei vielä ole saatavilla
+	Refine the selection's whole edge from the image	Tarkenna valinnan koko reuna kuvan perusteella
 	Refine Mode	Tarkennustila
 	Select and Mask was closed: another layer was selected	Valitse ja maskaa suljettiin: toinen taso valittiin
 	Select and Mask was closed: its document is no longer the active one	Valitse ja maskaa suljettiin: sen asiakirja ei ole enää aktiivinen
@@ -4796,3 +4796,23 @@ cameraRaw	White Balance: As Shot	Valkotasapaino: kuvauksen mukainen
 	Pick a different document for each channel.	Valitse jokaiselle kanavalle eri asiakirja.
 	A picked document is no longer open.	Yksi valituista asiakirjoista ei ole enää auki.
 	A picked document is no longer a grayscale document of the same size.	Yksi valituista asiakirjoista ei ole enää samankokoinen harmaasävyasiakirja.
+	Contextual Task Bar	Asiayhteyden tehtäväpalkki
+	Drag contextual task bar	Vedä asiayhteyden tehtäväpalkkia
+	Reset position	Palauta sijainti
+	Hide contextual task bar	Piilota asiayhteyden tehtäväpalkki
+	Contextual task bar options	Asiayhteyden tehtäväpalkin asetukset
+	Hide the background with an editable layer mask.	Piilota tausta muokattavalla tasomaskilla.
+	Subject / background removal	Kohde / taustan poisto
+	Object selection	Objektin valinta
+	Classical (built in)	Perinteinen (sisäinen)
+	Download	Lataa
+	Download a model before choosing it. Downloads do not change the current method.	Lataa malli ennen sen valitsemista. Lataukset eivät muuta nykyistä menetelmää.
+	Downloaded	Ladattu
+	In use…	Käytössä…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Suuret mallit voivat viedä aikaa ja käyttää useita gigatavuja muistia. Edistyminen ja Peruuta näkyvät tilarivillä.
+	Local models aren't available in this build or session.	Paikalliset mallit eivät ole käytettävissä tässä versiossa tai istunnossa.
+	Local selection models	Paikalliset valintamallit
+	Model details	Mallin tiedot
+	Models run on this device. Images stay on this device.	Mallit toimivat tällä laitteella. Kuvat pysyvät tällä laitteella.
+	Not downloaded	Ei ladattu
+	Remove download	Poista lataus

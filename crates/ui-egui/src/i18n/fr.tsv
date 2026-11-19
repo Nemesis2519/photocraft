@@ -4553,7 +4553,7 @@ shape	Appearance	Apparence
 	Remember Settings	Mémoriser les paramètres
 	View Mode	Mode d'affichage
 	Object Aware needs a segmentation model, which isn't available yet	Selon l'objet nécessite un modèle de segmentation, pas encore disponible
-	Refine Hair needs hair detection, which isn't available yet	Améliorer les cheveux nécessite une détection des cheveux, pas encore disponible
+	Refine the selection's whole edge from the image	Affiner tout le contour de la sélection d'après l'image
 	Select and Mask was closed: its document is no longer the active one	Sélectionner et masquer a été fermé : son document n’est plus le document actif
 	Select and Mask was closed: another layer was selected	Sélectionner et masquer a été fermé : un autre calque a été sélectionné
 
@@ -4608,3 +4608,27 @@ shape	Appearance	Apparence
 	Pick a different document for each channel.	Choisissez un document différent pour chaque canal.
 	A picked document is no longer open.	Un des documents choisis n'est plus ouvert.
 	A picked document is no longer a grayscale document of the same size.	Un des documents choisis n'est plus un document en niveaux de gris de même taille.
+	Contextual Task Bar	Barre des tâches contextuelle
+	Drag contextual task bar	Déplacer la barre des tâches contextuelle
+	Reset position	Réinitialiser la position
+	Hide contextual task bar	Masquer la barre des tâches contextuelle
+	Contextual task bar options	Options de la barre des tâches contextuelle
+	Hide the background with an editable layer mask.	Masquer le fond avec un masque de calque modifiable.
+	Subject / background removal	Sujet / suppression de l’arrière-plan
+	Object selection	Sélection d’objet
+	Classical (built in)	Méthode classique (intégrée)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Télécharger
+	Download a model before choosing it. Downloads do not change the current method.	Téléchargez un modèle avant de le choisir. Le téléchargement ne change pas la méthode actuelle.
+	Downloaded	Téléchargé
+	In use…	En cours d’utilisation…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Les grands modèles peuvent prendre du temps et utiliser plusieurs Go de mémoire. La progression et Annuler apparaissent dans la barre d’état.
+	Local models aren't available in this build or session.	Les modèles locaux ne sont pas disponibles dans cette version ou session.
+	Local selection models	Modèles de sélection locaux
+	Model details	Détails du modèle
+	Models run on this device. Images stay on this device.	Les modèles s’exécutent sur cet appareil. Les images restent sur cet appareil.
+	Not downloaded	Non téléchargé
+	Remove download	Supprimer le téléchargement
+	Select Subject and Remove Background; detailed, soft edges	Sélectionner le sujet et supprimer l’arrière-plan ; contours fins et doux
+	Object Selection; drag a box around the object	Sélection d’objet ; tracer un cadre autour de l’objet

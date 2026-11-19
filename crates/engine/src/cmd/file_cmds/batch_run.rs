@@ -826,6 +826,10 @@ pub(super) fn batch(s: &mut Session, p: &Value) -> Result<Value> {
         save.preserve_alpha = true;
     }
     let authorize = s.authorize;
+    // Reuse a host-granted backend (and its resident model) across inputs. A default or
+    // untrusted session still has no model-cache capability; nested steps retain its gate.
+    let model_backend = s.model_backend.clone();
+    let integrations = s.prefs().integrations.clone();
     let raw_ppi = super::open::raw_open_resolution(s);
     let action_prefs = s.prefs().actions.clone();
     let prefs = s.prefs.clone();
@@ -878,6 +882,8 @@ pub(super) fn batch(s: &mut Session, p: &Value) -> Result<Value> {
                         scratch.color.settings.ask_on_missing = false;
                     }
                     scratch.authorize = authorize;
+                    scratch.model_backend = model_backend.clone();
+                    scratch.edit_prefs(|p| p.integrations = integrations.clone());
                     if quiet_raw {
                         scratch.batch_raw_open = Some(raw_settings.clone());
                     }
@@ -956,6 +962,8 @@ pub(super) fn batch(s: &mut Session, p: &Value) -> Result<Value> {
                     Ok(())
                 };
                 scratch.authorize = authorize;
+                scratch.model_backend = model_backend.clone();
+                scratch.edit_prefs(|p| p.integrations = integrations.clone());
                 scratch.actions = actions.clone();
                 scratch.actions.playback_steps = carried.get();
                 scratch.actions.script_steps = script_steps.get();

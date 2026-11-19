@@ -4273,7 +4273,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Instellingen onthouden
 	View Mode	Weergavemodus
 	Object Aware needs a segmentation model, which isn't available yet	Objectbewust vereist een segmentatiemodel dat nog niet beschikbaar is
-	Refine Hair needs hair detection, which isn't available yet	Haar verfijnen vereist haardetectie die nog niet beschikbaar is
+	Refine the selection's whole edge from the image	De hele rand van de selectie verfijnen op basis van de afbeelding
 	Select and Mask was closed: its document is no longer the active one	Selecteren en maskeren is gesloten: het document is niet meer het actieve document
 	Select and Mask was closed: another layer was selected	Selecteren en maskeren is gesloten: er is een andere laag geselecteerd
 	Select Layer Under Cursor	Laag onder cursor selecteren
@@ -4337,3 +4337,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Kies voor elk kanaal een ander document.
 	A picked document is no longer open.	Een gekozen document is niet meer geopend.
 	A picked document is no longer a grayscale document of the same size.	Een gekozen document is geen grijswaardendocument van hetzelfde formaat meer.
+	Contextual Task Bar	Contextuele taakbalk
+	Drag contextual task bar	Contextuele taakbalk verslepen
+	Reset position	Positie herstellen
+	Hide contextual task bar	Contextuele taakbalk verbergen
+	Contextual task bar options	Opties van de contextuele taakbalk
+	Hide the background with an editable layer mask.	Verberg de achtergrond met een bewerkbaar laagmasker.
+	Subject / background removal	Onderwerp / achtergrond verwijderen
+	Object selection	Objectselectie
+	Classical (built in)	Klassiek (ingebouwd)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Downloaden
+	Download a model before choosing it. Downloads do not change the current method.	Download een model voordat u het kiest. Downloads wijzigen de huidige methode niet.
+	Downloaded	Gedownload
+	In use…	In gebruik…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Grote modellen kunnen lang duren en meerdere GB geheugen gebruiken. Voortgang en Annuleren verschijnen in de statusbalk.
+	Local models aren't available in this build or session.	Lokale modellen zijn niet beschikbaar in deze build of sessie.
+	Local selection models	Lokale selectiemodellen
+	Model details	Modeldetails
+	Models run on this device. Images stay on this device.	Modellen draaien op dit apparaat. Afbeeldingen blijven op dit apparaat.
+	Not downloaded	Niet gedownload
+	Remove download	Download verwijderen
+	Select Subject and Remove Background; detailed, soft edges	Onderwerp selecteren en achtergrond verwijderen; gedetailleerde, zachte randen
+	Object Selection; drag a box around the object	Objectselectie; sleep een kader rond het object

@@ -4027,7 +4027,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Ghi nhớ cài đặt
 	View Mode	Chế độ xem
 	Object Aware needs a segmentation model, which isn't available yet	Nhận biết đối tượng cần mô hình phân đoạn, hiện chưa có
-	Refine Hair needs hair detection, which isn't available yet	Tinh chỉnh tóc cần tính năng phát hiện tóc, hiện chưa có
+	Refine the selection's whole edge from the image	Tinh chỉnh toàn bộ cạnh vùng chọn theo hình ảnh
 	Select and Mask was closed: its document is no longer the active one	Đã đóng Chọn và Mặt nạ: tài liệu của nó không còn là tài liệu đang hoạt động
 	Select and Mask was closed: another layer was selected	Đã đóng Chọn và Mặt nạ: một lớp khác đã được chọn
 	Select Layer Under Cursor	Chọn lớp dưới con trỏ
@@ -4086,3 +4086,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Chọn một tài liệu khác cho mỗi kênh.
 	A picked document is no longer open.	Một tài liệu đã chọn không còn mở.
 	A picked document is no longer a grayscale document of the same size.	Một tài liệu đã chọn không còn là tài liệu thang xám cùng kích thước.
+	Contextual Task Bar	Thanh tác vụ theo ngữ cảnh
+	Drag contextual task bar	Kéo thanh tác vụ theo ngữ cảnh
+	Reset position	Đặt lại vị trí
+	Hide contextual task bar	Ẩn thanh tác vụ theo ngữ cảnh
+	Contextual task bar options	Tùy chọn thanh tác vụ theo ngữ cảnh
+	Hide the background with an editable layer mask.	Ẩn nền bằng mặt nạ lớp có thể chỉnh sửa.
+	Subject / background removal	Chủ thể / xóa nền
+	Object selection	Chọn đối tượng
+	Classical (built in)	Phương pháp cổ điển (tích hợp)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Tải xuống
+	Download a model before choosing it. Downloads do not change the current method.	Tải mô hình trước khi chọn. Việc tải xuống không thay đổi phương pháp hiện tại.
+	Downloaded	Đã tải xuống
+	In use…	Đang sử dụng…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Mô hình lớn có thể mất thời gian và dùng vài GB bộ nhớ. Tiến trình và nút Hủy xuất hiện trên thanh trạng thái.
+	Local models aren't available in this build or session.	Mô hình cục bộ không khả dụng trong bản dựng hoặc phiên này.
+	Local selection models	Mô hình chọn cục bộ
+	Model details	Chi tiết mô hình
+	Models run on this device. Images stay on this device.	Mô hình chạy trên thiết bị này. Hình ảnh vẫn ở trên thiết bị này.
+	Not downloaded	Chưa tải xuống
+	Remove download	Xóa bản tải xuống
+	Select Subject and Remove Background; detailed, soft edges	Chọn chủ thể và xóa nền; giữ các cạnh mềm, chi tiết
+	Object Selection; drag a box around the object	Chọn đối tượng; kéo một khung quanh đối tượng

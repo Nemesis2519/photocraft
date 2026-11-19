@@ -4714,7 +4714,7 @@ shape	Appearance	Оформление
 	Remember Settings	Запомнить параметры
 	View Mode	Режим просмотра
 	Object Aware needs a segmentation model, which isn't available yet	Для режима «С учетом объектов» нужна модель сегментации, которая пока недоступна
-	Refine Hair needs hair detection, which isn't available yet	Для уточнения волос нужно распознавание волос, которое пока недоступно
+	Refine the selection's whole edge from the image	Уточнить весь край выделения по изображению
 	Select and Mask was closed: its document is no longer the active one	Окно «Выделение и маска» закрыто: его документ больше не активен
 	Select and Mask was closed: another layer was selected	Окно «Выделение и маска» закрыто: выбран другой слой
 
@@ -4770,3 +4770,27 @@ shape	Appearance	Оформление
 	Pick a different document for each channel.	Выберите отдельный документ для каждого канала.
 	A picked document is no longer open.	Один из выбранных документов больше не открыт.
 	A picked document is no longer a grayscale document of the same size.	Один из выбранных документов больше не является документом в градациях серого того же размера.
+	Contextual Task Bar	Контекстная панель задач
+	Drag contextual task bar	Перетащить контекстную панель задач
+	Reset position	Сбросить положение
+	Hide contextual task bar	Скрыть контекстную панель задач
+	Contextual task bar options	Параметры контекстной панели задач
+	Hide the background with an editable layer mask.	Скрыть фон с помощью редактируемой маски слоя.
+	Subject / background removal	Выделение объекта / удаление фона
+	Object selection	Выделение объектов
+	Classical (built in)	Классический метод (встроенный)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Скачать
+	Download a model before choosing it. Downloads do not change the current method.	Скачайте модель перед выбором. Скачивание не меняет текущий метод.
+	Downloaded	Скачано
+	In use…	Используется…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Большие модели могут требовать времени и нескольких ГБ памяти. Прогресс и отмена доступны в строке состояния.
+	Local models aren't available in this build or session.	Локальные модели недоступны в этой сборке или сеансе.
+	Local selection models	Локальные модели выделения
+	Model details	Подробнее о модели
+	Models run on this device. Images stay on this device.	Модели работают на этом устройстве. Изображения остаются на этом устройстве.
+	Not downloaded	Не скачано
+	Remove download	Удалить скачанное
+	Select Subject and Remove Background; detailed, soft edges	Выделение объекта и удаление фона; детализированные мягкие края
+	Object Selection; drag a box around the object	Выделение объекта; обведите объект прямоугольником

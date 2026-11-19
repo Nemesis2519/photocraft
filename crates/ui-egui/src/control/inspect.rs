@@ -35,6 +35,7 @@ pub fn inspect(app: &PhotocraftApp, ctx: &egui::Context) -> Value {
         "memory": photocraft_raster::memory::stats(),
         "tool": app.ui.tool,
         "toolOptions": app.ui.tool_options,
+        "contextualTaskbar": app.ui.contextual_taskbar,
         "perspectiveCrop": app.ui.perspective_crop,
         "strokeEditor": app.ui.stroke_editor,
         "magnetic": app.ui.magnetic,

@@ -1,6 +1,6 @@
 use super::shortcuts::normalize_shortcut;
 use super::{
-    AppearanceMode, Ask, CanvasBorder, CanvasColor, CheckerColors, CheckerSize, ColorPicker, DarkTheme, ExportLocation, ExportMetadata, FontPreview,
+    ObjectModel, SubjectModel, AppearanceMode, Ask, CanvasBorder, CanvasColor, CheckerColors, CheckerSize, ColorPicker, DarkTheme, ExportLocation, ExportMetadata, FontPreview,
     GpuBackend, Interpolation, LightTheme, LineStyle, LinuxDisplayServer, LogDestination, LogDetail, OtherCursor, PaintingCursor, PlaybackPerformance,
     PointSize, PressureCurve, QuickExportFormat, RawColorSpace, RawDemosaic, RawDepth, RawSharpen, RenderingMode, RightClickPaint, TextEngine, Theme, TypeUnit,
     UiFontSize, UiScale, Unit, Value,
@@ -50,8 +50,15 @@ pub const HIDDEN_UNTIL_IMPLEMENTED: &[&str] = &[
 
 /// Is the preference at `path` (`"section.key"`) hidden from the Preferences dialog?
 pub fn is_hidden(path: &str) -> bool {
-    HIDDEN_UNTIL_IMPLEMENTED.contains(&path) || (!cfg!(target_os = "linux") && LINUX_ONLY.contains(&path))
+    HIDDEN_UNTIL_IMPLEMENTED.contains(&path) || (!cfg!(target_os = "linux") && LINUX_ONLY.contains(&path)) || (!NATIVE_MODELS && LOCAL_ML_ONLY.contains(&path))
 }
+
+/// Whether this build can run local models (the `local-ml` feature, native only).
+pub const NATIVE_MODELS: bool = cfg!(all(feature = "local-ml", not(target_arch = "wasm32")));
+
+/// Model choices; builds without local models don't show them. A choice saved by a build with
+/// them (the preferences file is shared) still round-trips, and means Classical here.
+pub const LOCAL_ML_ONLY: &[&str] = &["integrations.subjectModel", "integrations.objectModel"];
 
 /// Preferences that only do something on Linux; the dialog doesn't show them elsewhere. They
 /// still load, save and round-trip on every platform.
@@ -70,6 +77,8 @@ pub fn gpu_adapter_matches(name: &str, wanted: &str) -> bool {
 pub fn choices(path: &str) -> Option<&'static [&'static str]> {
     Some(match path {
         "general.colorPicker" => ColorPicker::NAMES,
+        "integrations.subjectModel" => SubjectModel::NAMES,
+        "integrations.objectModel" => ObjectModel::NAMES,
         "general.imageInterpolation" => Interpolation::NAMES,
         "interface.theme" => Theme::NAMES,
         "interface.appearanceMode" => AppearanceMode::NAMES,

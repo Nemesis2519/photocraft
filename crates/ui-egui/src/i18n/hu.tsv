@@ -4436,7 +4436,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Beállítások megjegyzése
 	View Mode	Nézetmód
 	Object Aware needs a segmentation model, which isn't available yet	Az Objektumalapú módhoz szegmentálási modell kell, amely még nem érhető el
-	Refine Hair needs hair detection, which isn't available yet	A Haj finomításához hajfelismerés kell, amely még nem érhető el
+	Refine the selection's whole edge from the image	A kijelölés teljes szélének finomítása a kép alapján
 	Select and Mask was closed: its document is no longer the active one	A Kijelölés és maszk bezárult: a dokumentuma már nem az aktív
 	Select and Mask was closed: another layer was selected	A Kijelölés és maszk bezárult: másik réteg lett kijelölve
 	Drag to move the selected path	Húzza a kijelölt útvonal mozgatásához
@@ -4492,3 +4492,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Minden csatornához másik dokumentumot válasszon.
 	A picked document is no longer open.	Az egyik kiválasztott dokumentum már nincs megnyitva.
 	A picked document is no longer a grayscale document of the same size.	Az egyik kiválasztott dokumentum már nem azonos méretű szürkeárnyalatos dokumentum.
+	Contextual Task Bar	Környezetfüggő feladatsáv
+	Drag contextual task bar	Környezetfüggő feladatsáv húzása
+	Reset position	Pozíció visszaállítása
+	Hide contextual task bar	Környezetfüggő feladatsáv elrejtése
+	Contextual task bar options	Környezetfüggő feladatsáv beállításai
+	Hide the background with an editable layer mask.	A háttér elrejtése szerkeszthető rétegmaszkkal.
+	Subject / background removal	Téma / háttér eltávolítása
+	Object selection	Objektum kijelölése
+	Classical (built in)	Klasszikus (beépített)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Letöltés
+	Download a model before choosing it. Downloads do not change the current method.	Választás előtt töltsön le egy modellt. A letöltés nem változtatja meg a jelenlegi módszert.
+	Downloaded	Letöltve
+	In use…	Használatban…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	A nagy modellek futtatása időt igényelhet, és több GB memóriát használhat. Az előrehaladás és a Mégse az állapotsávon látható.
+	Local models aren't available in this build or session.	A helyi modellek nem érhetők el ebben a verzióban vagy munkamenetben.
+	Local selection models	Helyi kijelölési modellek
+	Model details	Modell részletei
+	Models run on this device. Images stay on this device.	A modellek ezen az eszközön futnak. A képek ezen az eszközön maradnak.
+	Not downloaded	Nincs letöltve
+	Remove download	Letöltés eltávolítása
+	Select Subject and Remove Background; detailed, soft edges	Téma kijelölése és háttér eltávolítása; részletes, lágy szélek
+	Object Selection; drag a box around the object	Objektum kijelölése; húzzon keretet az objektum köré

@@ -40,6 +40,8 @@ pub enum SelectionEdit {
     Object { area: ObjectArea, add: bool, sample_all_layers: bool },
     /// The Select Subject button.
     Subject { mode: SelectionMode, sample_all_layers: bool },
+    /// The Refine Hair button: the selection's edge re-solved from the image.
+    Hair { sample_all_layers: bool },
     /// Global Refinements › Clear Selection.
     Clear,
     /// Global Refinements › Invert.
@@ -121,7 +123,7 @@ pub fn parse(p: &Value) -> Result<Vec<SelectionEdit>> {
     let mut edits = Vec::with_capacity(list.len());
     for e in list {
         let o = e.as_object().ok_or_else(|| bad("each edit must be an object with a tool"))?;
-        let tool = o.get("tool").and_then(Value::as_str).ok_or_else(|| bad("each edit needs a tool: quick|brush|lasso|object|subject|clear|invert"))?;
+        let tool = o.get("tool").and_then(Value::as_str).ok_or_else(|| bad("each edit needs a tool: quick|brush|lasso|object|subject|hair|clear|invert"))?;
         let edit = match tool {
             "quick" => SelectionEdit::Quick {
                 points: points(o, 1, &mut total)?,
@@ -167,9 +169,10 @@ pub fn parse(p: &Value) -> Result<Vec<SelectionEdit>> {
                 };
                 SelectionEdit::Subject { mode, sample_all_layers: flag(o, "sampleAllLayers", true)? }
             }
+            "hair" => SelectionEdit::Hair { sample_all_layers: flag(o, "sampleAllLayers", false)? },
             "clear" => SelectionEdit::Clear,
             "invert" => SelectionEdit::Invert,
-            other => return Err(bad(&format!("unknown edit tool `{other}`: quick|brush|lasso|object|subject|clear|invert"))),
+            other => return Err(bad(&format!("unknown edit tool `{other}`: quick|brush|lasso|object|subject|hair|clear|invert"))),
         };
         edits.push(edit);
     }
@@ -285,9 +288,55 @@ pub fn apply_one(doc: &Document, layer: Option<LayerId>, base: Option<Surface>, 
             let region = with_doc_sampler(doc, layer, *sample_all_layers, |smp, doc| subject::select_subject(smp, doc.bounds()));
             combine(region, *mode)
         }
+        SelectionEdit::Hair { sample_all_layers } => {
+            let refined = base.as_ref().and_then(|b| with_doc_sampler(doc, layer, *sample_all_layers, |smp, doc| matting::refine_hair(smp, b, doc.bounds())));
+            refined.or(base)
+        }
         SelectionEdit::Clear => None,
         SelectionEdit::Invert => invert(base.as_ref(), canvas),
     }
+}
+
+/// The local model behind the workspace's Select Subject button, as the saved preference chose it.
+/// It is plain data, so the preview's thread can run it too.
+#[derive(Clone)]
+pub struct SubjectModel {
+    backend: std::sync::Arc<dyn photocraft_ml::InferenceBackend>,
+    id: photocraft_ml::ModelId,
+}
+
+/// The model Select Subject uses in this session; `None` means the classical method.
+pub fn subject_model(s: &crate::Session) -> Result<Option<SubjectModel>> {
+    let Some(id) = crate::model_cmds::subject_model(s, &Value::Null)? else { return Ok(None) };
+    Ok(Some(SubjectModel { backend: crate::model_cmds::backend(s)?, id }))
+}
+
+/// [`apply`], with Select Subject running `model` when there is one. A model that fails is an
+/// error, never a silent change of method.
+pub fn apply_using(
+    doc: &Document,
+    layer: Option<LayerId>,
+    base: Option<Surface>,
+    edits: &[SelectionEdit],
+    model: Option<&SubjectModel>,
+    ctx: &crate::jobs::JobCtx,
+) -> Result<Option<Surface>> {
+    let Some(model) = model else { return Ok(apply(doc, layer, base, edits)) };
+    let mut selection = base;
+    for part in edits.split_inclusive(|e| matches!(e, SelectionEdit::Subject { .. })) {
+        let Some((SelectionEdit::Subject { mode, sample_all_layers }, before)) = part.split_last() else {
+            selection = apply(doc, layer, selection, part);
+            continue;
+        };
+        selection = apply(doc, layer, selection, before);
+        let region = with_doc_sampler(doc, layer, *sample_all_layers, |smp, doc| {
+            crate::model_cmds::infer_region(model.backend.as_ref(), model.id, smp, doc, doc.bounds(), photocraft_ml::Prompt::Subject, ctx)
+        })?;
+        if let Some(region) = region {
+            selection = combine_region(selection.as_ref(), Some(&region), *mode);
+        }
+    }
+    Ok(selection)
 }
 
 /// `edits` applied in order to `base`: the selection Select and Mask refines.
@@ -326,15 +375,17 @@ mod tests {
             {"tool": "object", "rect": [10, 10, -5, -5]},
             {"tool": "object", "point": [3, 4], "mode": "subtract"},
             {"tool": "subject", "mode": "add"},
+            {"tool": "hair", "sampleAllLayers": true},
             {"tool": "clear"},
             {"tool": "invert"},
         ]});
         let edits = parse(&p).expect("valid edits");
-        assert_eq!(edits.len(), 8);
+        assert_eq!(edits.len(), 9);
         assert_eq!(edits[0], SelectionEdit::Quick { points: vec![(1.0, 2.0)], size: 12.0, add: false, sample_all_layers: true });
         assert_eq!(edits[1], SelectionEdit::Brush { points: vec![(1.0, 2.0), (3.0, 4.0)], size: 30.0, hardness: 50.0, add: true });
         assert_eq!(edits[3], SelectionEdit::Object { area: ObjectArea::Rect(Rect::new(5, 5, 10, 10)), add: true, sample_all_layers: false });
         assert_eq!(edits[5], SelectionEdit::Subject { mode: SelectionMode::Add, sample_all_layers: true });
+        assert_eq!(edits[6], SelectionEdit::Hair { sample_all_layers: true });
         assert!(parse(&json!({})).expect("none").is_empty());
         assert!(parse(&json!({"edits": null})).expect("none").is_empty());
         assert!(has_edits(&p) && !has_edits(&json!({"edits": []})) && !has_edits(&json!({})));
@@ -367,6 +418,7 @@ mod tests {
             json!([{"tool": "object", "rect": [1, 2, 3]}]),
             json!([{"tool": "object", "point": [1, "y"]}]),
             json!([{"tool": "subject", "mode": "intersect"}]),
+            json!([{"tool": "hair", "sampleAllLayers": "yes"}]),
             json!([{"tool": "brush", "points": many_points}]),
             json!(many_edits),
             // Each within the limit, together past it.

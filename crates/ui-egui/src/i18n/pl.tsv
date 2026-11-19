@@ -4134,7 +4134,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Zapamiętaj ustawienia
 	View Mode	Tryb widoku
 	Object Aware needs a segmentation model, which isn't available yet	Tryb Według obiektów wymaga modelu segmentacji, który nie jest jeszcze dostępny
-	Refine Hair needs hair detection, which isn't available yet	Dopracowanie włosów wymaga wykrywania włosów, które nie jest jeszcze dostępne
+	Refine the selection's whole edge from the image	Dopracuj całą krawędź zaznaczenia na podstawie obrazu
 	Select and Mask was closed: its document is no longer the active one	Zamknięto Zaznacz i maskuj: jego dokument nie jest już aktywny
 	Select and Mask was closed: another layer was selected	Zamknięto Zaznacz i maskuj: wybrano inną warstwę
 	Select Layer Under Cursor	Zaznacz warstwę pod kursorem
@@ -4200,3 +4200,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Wybierz inny dokument dla każdego kanału.
 	A picked document is no longer open.	Jeden z wybranych dokumentów nie jest już otwarty.
 	A picked document is no longer a grayscale document of the same size.	Jeden z wybranych dokumentów nie jest już dokumentem w skali szarości o tym samym rozmiarze.
+	Contextual Task Bar	Kontekstowy pasek zadań
+	Drag contextual task bar	Przeciągnij kontekstowy pasek zadań
+	Reset position	Zresetuj położenie
+	Hide contextual task bar	Ukryj kontekstowy pasek zadań
+	Contextual task bar options	Opcje kontekstowego paska zadań
+	Hide the background with an editable layer mask.	Ukryj tło za pomocą edytowalnej maski warstwy.
+	Subject / background removal	Temat / usuwanie tła
+	Object selection	Zaznaczanie obiektów
+	Classical (built in)	Metoda klasyczna (wbudowana)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Pobierz
+	Download a model before choosing it. Downloads do not change the current method.	Pobierz model przed jego wybraniem. Pobieranie nie zmienia bieżącej metody.
+	Downloaded	Pobrano
+	In use…	W użyciu…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Duże modele mogą potrzebować czasu i kilku GB pamięci. Postęp i przycisk Anuluj są wyświetlane na pasku stanu.
+	Local models aren't available in this build or session.	Modele lokalne nie są dostępne w tej wersji lub sesji.
+	Local selection models	Lokalne modele zaznaczania
+	Model details	Szczegóły modelu
+	Models run on this device. Images stay on this device.	Modele działają na tym urządzeniu. Obrazy pozostają na tym urządzeniu.
+	Not downloaded	Nie pobrano
+	Remove download	Usuń pobrany model
+	Select Subject and Remove Background; detailed, soft edges	Zaznacz temat i Usuń tło; szczegółowe, miękkie krawędzie
+	Object Selection; drag a box around the object	Zaznaczanie obiektów; przeciągnij prostokąt wokół obiektu

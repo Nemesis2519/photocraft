@@ -4245,7 +4245,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Ayarları Hatırla
 	View Mode	Görünüm Modu
 	Object Aware needs a segmentation model, which isn't available yet	Nesneye Duyarlı mod henüz kullanılamayan bir bölütleme modeli gerektirir
-	Refine Hair needs hair detection, which isn't available yet	Saçı Hassaslaştır henüz kullanılamayan saç algılama gerektirir
+	Refine the selection's whole edge from the image	Seçimin tüm kenarını görüntüye göre iyileştir
 	Select and Mask was closed: its document is no longer the active one	Seç ve Maskele kapatıldı: belgesi artık etkin değil
 	Select and Mask was closed: another layer was selected	Seç ve Maskele kapatıldı: başka bir katman seçildi
 	Move effect up	Efekti yukarı taşı
@@ -4314,3 +4314,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Her kanal için farklı bir belge seçin.
 	A picked document is no longer open.	Seçilen belgelerden biri artık açık değil.
 	A picked document is no longer a grayscale document of the same size.	Seçilen belgelerden biri artık aynı boyutta gri tonlamalı bir belge değil.
+	Contextual Task Bar	Bağlamsal Görev Çubuğu
+	Drag contextual task bar	Bağlamsal görev çubuğunu sürükle
+	Reset position	Konumu sıfırla
+	Hide contextual task bar	Bağlamsal görev çubuğunu gizle
+	Contextual task bar options	Bağlamsal görev çubuğu seçenekleri
+	Hide the background with an editable layer mask.	Arka planı düzenlenebilir bir katman maskesiyle gizleyin.
+	Subject / background removal	Konu / arka plan kaldırma
+	Object selection	Nesne seçimi
+	Classical (built in)	Klasik (yerleşik)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	İndir
+	Download a model before choosing it. Downloads do not change the current method.	Seçmeden önce bir model indirin. İndirme işlemi geçerli yöntemi değiştirmez.
+	Downloaded	İndirildi
+	In use…	Kullanımda…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Büyük modeller zaman alabilir ve birkaç GB bellek kullanabilir. İlerleme ve İptal durum çubuğunda görünür.
+	Local models aren't available in this build or session.	Yerel modeller bu derlemede veya oturumda kullanılamıyor.
+	Local selection models	Yerel seçim modelleri
+	Model details	Model ayrıntıları
+	Models run on this device. Images stay on this device.	Modeller bu cihazda çalışır. Görüntüler bu cihazda kalır.
+	Not downloaded	İndirilmedi
+	Remove download	İndirmeyi kaldır
+	Select Subject and Remove Background; detailed, soft edges	Konu Seç ve Arka Planı Kaldır; ayrıntılı, yumuşak kenarlar
+	Object Selection; drag a box around the object	Nesne Seçimi; nesnenin etrafına bir kutu sürükleyin

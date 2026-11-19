@@ -470,6 +470,9 @@ pub struct UiState {
     pub selection_mode: u8,
     #[serde(default)]
     pub tool_options: ToolOptions,
+    /// Floating viewport actions, remembered independently of the document.
+    #[serde(default)]
+    pub contextual_taskbar: crate::contextual_taskbar::TaskbarState,
     /// The shape Fill / Stroke swatches' recently used gradients, newest first (the Gradient
     /// tab's Recent row).
     #[serde(default)]
@@ -620,6 +623,7 @@ impl Default for UiState {
             brushes_panel: Default::default(),
             selection_mode: 0,
             tool_options: ToolOptions::default(),
+            contextual_taskbar: Default::default(),
             recent_gradients: Vec::new(),
             polygon: Vec::new(),
             polygon_mode: String::new(),

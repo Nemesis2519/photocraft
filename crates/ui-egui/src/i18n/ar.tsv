@@ -557,7 +557,7 @@
 	Real-Time Refinement	تحسين في الوقت الفعلي
 	Refine Edge Brush Tool	أداة فرشاة تحسين الحافة
 	Refine Hair	تحسين الشعر
-	Refine Hair needs hair detection, which isn't available yet	يتطلب «تحسين الشعر» اكتشاف الشعر، وهو غير متوفر بعد
+	Refine the selection's whole edge from the image	تحسين حافة التحديد بالكامل استنادًا إلى الصورة
 	Refine Mode	وضع التحسين
 	Select and Mask was closed: another layer was selected	تم إغلاق «تحديد وقناع»: حُدِّدت طبقة أخرى
 	Select and Mask was closed: its document is no longer the active one	تم إغلاق «تحديد وقناع»: لم يعد مستنده هو المستند النشط
@@ -3579,3 +3579,23 @@ curves	Smooth	تنعيم
 	Pick a different document for each channel.	اختر مستندًا مختلفًا لكل قناة.
 	A picked document is no longer open.	أحد المستندات المختارة لم يعد مفتوحًا.
 	A picked document is no longer a grayscale document of the same size.	أحد المستندات المختارة لم يعد مستندًا بتدرج الرمادي بالحجم نفسه.
+	Contextual Task Bar	شريط المهام السياقي
+	Drag contextual task bar	اسحب شريط المهام السياقي
+	Reset position	إعادة تعيين الموضع
+	Hide contextual task bar	إخفاء شريط المهام السياقي
+	Contextual task bar options	خيارات شريط المهام السياقي
+	Hide the background with an editable layer mask.	إخفاء الخلفية باستخدام قناع طبقة قابل للتعديل.
+	Subject / background removal	الموضوع / إزالة الخلفية
+	Object selection	تحديد الكائن
+	Classical (built in)	تقليدية (مضمّنة)
+	Download	تنزيل
+	Download a model before choosing it. Downloads do not change the current method.	نزّل نموذجًا قبل اختياره. لا تغيّر عمليات التنزيل الطريقة الحالية.
+	Downloaded	تم التنزيل
+	In use…	قيد الاستخدام…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	قد تستغرق النماذج الكبيرة وقتًا وتستخدم عدة غيغابايت من الذاكرة. يظهر التقدم والإلغاء في شريط الحالة.
+	Local models aren't available in this build or session.	النماذج المحلية غير متاحة في هذا الإصدار أو الجلسة.
+	Local selection models	نماذج التحديد المحلية
+	Model details	تفاصيل النموذج
+	Models run on this device. Images stay on this device.	تعمل النماذج على هذا الجهاز. وتبقى الصور على هذا الجهاز.
+	Not downloaded	لم يتم التنزيل
+	Remove download	إزالة التنزيل

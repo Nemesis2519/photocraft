@@ -72,7 +72,7 @@ pub fn is_enabled(app: &PhotocraftApp, id: &str) -> bool {
             app.session.active().is_some() && app.services.export.is_some()
         }
         i if i.starts_with("window.toggle.") => true,
-        "window.togglePanels" => true,
+        "window.togglePanels" | "window.contextualTaskbar" => true,
         // With one document open the key stays quiet, as in Photoshop, rather than reporting why.
         "window.nextDocument" | "window.previousDocument" => app.session.active().is_some(),
         i if panel_alias(i).is_some() || workspace_name(i).is_some() => true,
@@ -197,6 +197,7 @@ pub(super) fn checked(app: &PhotocraftApp, id: &str) -> Option<bool> {
         "window.toggle.toolbar" => p.toolbar,
         "window.toggle.dock" => p.dock,
         "window.togglePanels" => p.toolbar || p.options_bar || p.dock,
+        "window.contextualTaskbar" => app.ui.contextual_taskbar.visible,
         "window.toggle.options" => p.options_bar,
         "window.toggle.brushSettings" => p.brush_settings,
         "window.toggle.brushes" => p.brushes,

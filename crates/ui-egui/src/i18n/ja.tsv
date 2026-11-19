@@ -4192,7 +4192,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	設定を保存
 	View Mode	表示モード
 	Object Aware needs a segmentation model, which isn't available yet	オブジェクト認識にはセグメンテーションモデルが必要ですが、まだ利用できません
-	Refine Hair needs hair detection, which isn't available yet	髪の毛を調整には髪の毛の検出が必要ですが、まだ利用できません
+	Refine the selection's whole edge from the image	画像に基づいて選択範囲の境界全体を調整します
 	Select and Mask was closed: its document is no longer the active one	「選択とマスク」を閉じました: 対象のドキュメントがアクティブではなくなりました
 	Select and Mask was closed: another layer was selected	「選択とマスク」を閉じました: 別のレイヤーが選択されました
 	Drag to move the selected path	ドラッグして選択したパスを移動
@@ -4253,3 +4253,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	チャンネルごとに別のドキュメントを選択してください。
 	A picked document is no longer open.	選択したドキュメントの一つが開かれていません。
 	A picked document is no longer a grayscale document of the same size.	選択したドキュメントの一つが、同じサイズのグレースケールのドキュメントではなくなりました。
+	Contextual Task Bar	コンテキストタスクバー
+	Drag contextual task bar	コンテキストタスクバーをドラッグ
+	Reset position	位置をリセット
+	Hide contextual task bar	コンテキストタスクバーを非表示
+	Contextual task bar options	コンテキストタスクバーのオプション
+	Hide the background with an editable layer mask.	編集可能なレイヤーマスクで背景を隠します。
+	Subject / background removal	被写体選択 / 背景の削除
+	Object selection	オブジェクト選択
+	Classical (built in)	従来の方法（内蔵）
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	ダウンロード
+	Download a model before choosing it. Downloads do not change the current method.	モデルをダウンロードしてから選択してください。ダウンロードだけでは現在の方法は変わりません。
+	Downloaded	ダウンロード済み
+	In use…	使用中…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	大きなモデルは時間と数GBのメモリを使う場合があります。進捗とキャンセルはステータスバーに表示されます。
+	Local models aren't available in this build or session.	このビルドまたはセッションではローカルモデルを利用できません。
+	Local selection models	ローカル選択モデル
+	Model details	モデルの詳細
+	Models run on this device. Images stay on this device.	モデルはこのデバイス上で実行されます。画像はこのデバイス上に留まります。
+	Not downloaded	未ダウンロード
+	Remove download	ダウンロードを削除
+	Select Subject and Remove Background; detailed, soft edges	被写体を選択して背景を削除。細部を保った柔らかなエッジ
+	Object Selection; drag a box around the object	オブジェクト選択。オブジェクトを囲む矩形をドラッグ

@@ -583,7 +583,7 @@ cameraRaw	Yellow	पीला
 	Remember Settings	सेटिंग्स याद रखें
 	View Mode	दृश्य मोड
 	Object Aware needs a segmentation model, which isn't available yet	ऑब्जेक्ट-आधारित के लिए सेगमेंटेशन मॉडल चाहिए, जो अभी उपलब्ध नहीं है
-	Refine Hair needs hair detection, which isn't available yet	बाल परिशोधित करने के लिए बालों की पहचान चाहिए, जो अभी उपलब्ध नहीं है
+	Refine the selection's whole edge from the image	छवि के आधार पर चयन का पूरा किनारा परिष्कृत करें
 	Select and Mask was closed: its document is no longer the active one	चयन और मास्क बंद कर दिया गया: उसका दस्तावेज़ अब सक्रिय नहीं है
 	Select and Mask was closed: another layer was selected	चयन और मास्क बंद कर दिया गया: दूसरी लेयर चुनी गई
 # Art History Brush (#213).
@@ -660,3 +660,24 @@ cameraRaw	Yellow	पीला
 	Pick a different document for each channel.	हर चैनल के लिए अलग डॉक्यूमेंट चुनें।
 	A picked document is no longer open.	चुना गया एक डॉक्यूमेंट अब खुला नहीं है।
 	A picked document is no longer a grayscale document of the same size.	चुना गया एक डॉक्यूमेंट अब उसी आकार का ग्रेस्केल डॉक्यूमेंट नहीं है।
+	Contextual Task Bar	संदर्भ टास्क बार
+	Drag contextual task bar	संदर्भ टास्क बार खींचें
+	Reset position	स्थिति रीसेट करें
+	Hide contextual task bar	संदर्भ टास्क बार छिपाएं
+	Contextual task bar options	संदर्भ टास्क बार विकल्प
+	Hide the background with an editable layer mask.	संपादन योग्य लेयर मास्क से बैकग्राउंड छिपाएं।
+	Select Subject	विषय चुनें
+	Subject / background removal	विषय / बैकग्राउंड हटाना
+	Object selection	ऑब्जेक्ट चयन
+	Classical (built in)	क्लासिकल (अंतर्निहित)
+	Download	डाउनलोड करें
+	Download a model before choosing it. Downloads do not change the current method.	मॉडल चुनने से पहले उसे डाउनलोड करें। डाउनलोड से मौजूदा तरीका नहीं बदलता।
+	Downloaded	डाउनलोड हो गया
+	In use…	उपयोग में…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	बड़े मॉडल में समय लग सकता है और वे कई GB मेमोरी उपयोग कर सकते हैं। प्रगति और रद्द करें स्थिति बार में दिखते हैं।
+	Local models aren't available in this build or session.	इस बिल्ड या सत्र में लोकल मॉडल उपलब्ध नहीं हैं।
+	Local selection models	लोकल चयन मॉडल
+	Model details	मॉडल विवरण
+	Models run on this device. Images stay on this device.	मॉडल इसी डिवाइस पर चलते हैं। छवियां इसी डिवाइस पर रहती हैं।
+	Not downloaded	डाउनलोड नहीं हुआ
+	Remove download	डाउनलोड हटाएं

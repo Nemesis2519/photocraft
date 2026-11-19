@@ -3549,7 +3549,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Einstellungen merken
 	View Mode	Ansichtsmodus
 	Object Aware needs a segmentation model, which isn't available yet	Objektbezogen benötigt ein Segmentierungsmodell, das noch nicht verfügbar ist
-	Refine Hair needs hair detection, which isn't available yet	Haare verbessern benötigt eine Haarerkennung, die noch nicht verfügbar ist
+	Refine the selection's whole edge from the image	Gesamte Auswahlkante anhand des Bildes verbessern
 	Select and Mask was closed: its document is no longer the active one	Auswählen und maskieren wurde geschlossen: Das zugehörige Dokument ist nicht mehr aktiv
 	Select and Mask was closed: another layer was selected	Auswählen und maskieren wurde geschlossen: Es wurde eine andere Ebene ausgewählt
 
@@ -3617,3 +3617,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Wählen Sie für jeden Kanal ein anderes Dokument.
 	A picked document is no longer open.	Ein ausgewähltes Dokument ist nicht mehr geöffnet.
 	A picked document is no longer a grayscale document of the same size.	Ein ausgewähltes Dokument ist kein Graustufen-Dokument derselben Größe mehr.
+	Contextual Task Bar	Kontextbezogene Taskleiste
+	Drag contextual task bar	Kontextbezogene Taskleiste ziehen
+	Reset position	Position zurücksetzen
+	Hide contextual task bar	Kontextbezogene Taskleiste ausblenden
+	Contextual task bar options	Optionen der kontextbezogenen Taskleiste
+	Hide the background with an editable layer mask.	Den Hintergrund mit einer bearbeitbaren Ebenenmaske ausblenden.
+	Subject / background removal	Motiv / Hintergrund entfernen
+	Object selection	Objektauswahl
+	Classical (built in)	Klassische Methode (integriert)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Herunterladen
+	Download a model before choosing it. Downloads do not change the current method.	Laden Sie ein Modell herunter, bevor Sie es auswählen. Downloads ändern die aktuelle Methode nicht.
+	Downloaded	Heruntergeladen
+	In use…	Wird verwendet…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Große Modelle können Zeit und mehrere GB Arbeitsspeicher benötigen. Fortschritt und Abbrechen erscheinen in der Statusleiste.
+	Local models aren't available in this build or session.	Lokale Modelle sind in diesem Build oder dieser Sitzung nicht verfügbar.
+	Local selection models	Lokale Auswahlmodelle
+	Model details	Modelldetails
+	Models run on this device. Images stay on this device.	Modelle laufen auf diesem Gerät. Bilder bleiben auf diesem Gerät.
+	Not downloaded	Nicht heruntergeladen
+	Remove download	Download entfernen
+	Select Subject and Remove Background; detailed, soft edges	Motiv auswählen und Hintergrund entfernen; detaillierte, weiche Kanten
+	Object Selection; drag a box around the object	Objektauswahl; einen Rahmen um das Objekt ziehen

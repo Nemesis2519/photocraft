@@ -4266,7 +4266,7 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Remember Settings	Zapamatovat nastavení
 	View Mode	Režim zobrazení
 	Object Aware needs a segmentation model, which isn't available yet	Režim Podle objektů vyžaduje segmentační model, který zatím není k dispozici
-	Refine Hair needs hair detection, which isn't available yet	Upřesnit vlasy vyžaduje detekci vlasů, která zatím není k dispozici
+	Refine the selection's whole edge from the image	Upřesnit celý okraj výběru podle obrazu
 	Select and Mask was closed: its document is no longer the active one	Vybrat a maskovat bylo zavřeno: jeho dokument již není aktivní
 	Select and Mask was closed: another layer was selected	Vybrat a maskovat bylo zavřeno: byla vybrána jiná vrstva
 	Drag to move the selected path	Tažením přesunete vybranou cestu
@@ -4324,3 +4324,27 @@ smartSvg	AI/PDF/EPS contents will be edited as SVG. Saving replaces the embedded
 	Pick a different document for each channel.	Pro každý kanál vyberte jiný dokument.
 	A picked document is no longer open.	Jeden z vybraných dokumentů už není otevřený.
 	A picked document is no longer a grayscale document of the same size.	Jeden z vybraných dokumentů už není dokument ve stupních šedi stejné velikosti.
+	Contextual Task Bar	Kontextový panel úloh
+	Drag contextual task bar	Přetáhnout kontextový panel úloh
+	Reset position	Obnovit polohu
+	Hide contextual task bar	Skrýt kontextový panel úloh
+	Contextual task bar options	Možnosti kontextového panelu úloh
+	Hide the background with an editable layer mask.	Skrýt pozadí pomocí upravitelné masky vrstvy.
+	Subject / background removal	Výběr subjektu / odstranění pozadí
+	Object selection	Výběr objektu
+	Classical (built in)	Klasická metoda (vestavěná)
+	BiRefNet HR Matting	BiRefNet HR Matting
+	SAM 2.1 Large	SAM 2.1 Large
+	Download	Stáhnout
+	Download a model before choosing it. Downloads do not change the current method.	Před výběrem model stáhněte. Stažení nemění aktuální metodu.
+	Downloaded	Staženo
+	In use…	Používá se…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Velké modely mohou trvat déle a použít několik GB paměti. Průběh a Zrušit se zobrazují na stavovém řádku.
+	Local models aren't available in this build or session.	Místní modely nejsou v tomto sestavení nebo relaci dostupné.
+	Local selection models	Místní modely výběru
+	Model details	Podrobnosti modelu
+	Models run on this device. Images stay on this device.	Modely běží na tomto zařízení. Obrázky zůstávají na tomto zařízení.
+	Not downloaded	Nestaženo
+	Remove download	Odstranit stažený model
+	Select Subject and Remove Background; detailed, soft edges	Vybrat objekt a odstranit pozadí; podrobné, měkké okraje
+	Object Selection; drag a box around the object	Výběr objektu; nakreslete rámeček kolem objektu

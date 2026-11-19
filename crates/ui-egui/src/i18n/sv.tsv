@@ -4328,7 +4328,7 @@ curves	Smooth	Jämna ut
 	Real-Time Refinement	Förfining i realtid
 	Refine Edge Brush Tool	Kantförfiningspenselverktyg
 	Refine Hair	Förfina hår
-	Refine Hair needs hair detection, which isn't available yet	Förfina hår behöver håridentifiering, som inte är tillgänglig än
+	Refine the selection's whole edge from the image	Förfina hela markeringens kant utifrån bilden
 	Refine Mode	Förfiningsläge
 	Select and Mask was closed: another layer was selected	Markera och maskera stängdes: ett annat lager markerades
 	Select and Mask was closed: its document is no longer the active one	Markera och maskera stängdes: dess dokument är inte längre det aktiva
@@ -4793,3 +4793,23 @@ cameraRaw	White Balance: As Shot	Vitbalans: som tagen
 	Pick a different document for each channel.	Välj ett annat dokument för varje kanal.
 	A picked document is no longer open.	Ett av de valda dokumenten är inte längre öppet.
 	A picked document is no longer a grayscale document of the same size.	Ett av de valda dokumenten är inte längre ett gråskaledokument i samma storlek.
+	Contextual Task Bar	Kontextuellt aktivitetsfält
+	Drag contextual task bar	Dra kontextuellt aktivitetsfält
+	Reset position	Återställ position
+	Hide contextual task bar	Dölj kontextuellt aktivitetsfält
+	Contextual task bar options	Alternativ för kontextuellt aktivitetsfält
+	Hide the background with an editable layer mask.	Dölj bakgrunden med en redigerbar lagermask.
+	Subject / background removal	Motiv / ta bort bakgrund
+	Object selection	Objektmarkering
+	Classical (built in)	Klassisk (inbyggd)
+	Download	Hämta
+	Download a model before choosing it. Downloads do not change the current method.	Hämta en modell innan du väljer den. Hämtningar ändrar inte den aktuella metoden.
+	Downloaded	Hämtad
+	In use…	Används…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Stora modeller kan ta tid och använda flera GB minne. Förlopp och Avbryt visas i statusfältet.
+	Local models aren't available in this build or session.	Lokala modeller är inte tillgängliga i den här versionen eller sessionen.
+	Local selection models	Lokala markeringsmodeller
+	Model details	Modellinformation
+	Models run on this device. Images stay on this device.	Modellerna körs på den här enheten. Bilderna stannar på den här enheten.
+	Not downloaded	Inte hämtad
+	Remove download	Ta bort hämtning

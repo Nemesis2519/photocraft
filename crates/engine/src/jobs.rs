@@ -921,6 +921,11 @@ impl Session {
         self.jobs.inline = ctx;
     }
 
+    /// The context inline work runs under.
+    pub(crate) fn inline_job_ctx(&self) -> JobCtx {
+        self.jobs.inline.clone().unwrap_or_default()
+    }
+
     /// Run a command, in the background when it supports it (see [`jobs`](crate::jobs)). Errors
     /// like [`Session::execute`] for unknown, disabled or failing commands.
     pub fn start(&mut self, id: &str, params: Value) -> Result<Started> {
@@ -1555,6 +1560,7 @@ impl Session {
         if let Some(v) = crate::float_cmds::before_command(self, id)? {
             return Ok(Started::Done(v));
         }
+        let params = crate::model_cmds::inject_model(self, id, params);
         // Pixel commands follow the Channels panel target unless the caller names one.
         let run_params = self.admit(id, spec, &params)?;
         // This UI-only disclosure preference applies to both `execute` and `start`:

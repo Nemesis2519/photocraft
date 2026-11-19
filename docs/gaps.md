@@ -76,7 +76,7 @@ what an agent can't finish alone.
 - **Estimate:** 60–100 h (2–9 h each, per the calibration).
 
 ### G7. Workspaces shown as parameter dialogs
-- **Missing:** Select and Mask's Refine Hair (#2671), Object Aware refine mode (#2788) and Presets
+- **Missing:** Select and Mask's Object Aware refine mode (#2788), and a learned hair detector for Refine Hair (#2671; on `feat/local-ml` it refines the whole edge, [`local-ml.md`](local-ml.md))
   (TOOL-214-1; the workspace landed 2026-10-23, #7069, #8148: Photoshop's layout with its own
   Quick Selection, Refine Edge Brush, Brush, Object Selection, Lasso and Polygonal Lasso, Hand and
   Zoom, the view modes since #1754, Real-Time Refinement and High Quality Preview); Content-Aware Fill workspace with a paintable sampling area
@@ -238,6 +238,11 @@ what an agent can't finish alone.
   a Neural Filters taskspace; users ask for local models (#2313, #1996, #2682).
 - **Progress (2026-10-17):** classical Object Finder no longer rejects a foreground solely for covering over 60% of the canvas (#6548); canvas-boundary coverage distinguishes it from the surrounding backdrop. This does not add semantic recognition or close #2788.
 - **Progress (2026-10-26):** classical Select › Sky falls back to connected high-confidence components in the upper half when its top seed band is obstructed. Synthetic blue and overcast skies beneath an arch are covered, including disconnected openings; small patches, lower-half objects and neutral backdrops are rejected. This remains a colour/smoothness heuristic, not semantic recognition; #2788 stays open.
+- **Progress (2026-11-08, `feat/local-ml` only):** scored against Photoshop 2023's own Select
+  Subject on 66 CC0 photos, Remove Background with BiRefNet Lite and ViTMatte has a mean IoU of
+  0.876 and a median of 0.951. The rest of the gap is which things count as the subject, not the
+  edge (`docs/local-ml.md`, `scripts/ps-parity/`). Open bug: BiRefNet HR rejects photos with a side over
+  2048 px with "invalid image dimensions" (seen on tall 1920-wide photos).
 - **Estimate:** 300–600 h. **Human:** owner decision #41 (model licences, local vs remote).
 
 ### G16. Plug-in compatibility

@@ -4330,7 +4330,7 @@ curves	Smooth	Udjævn
 	Real-Time Refinement	Forfining i realtid
 	Refine Edge Brush Tool	Kantforfiningspenselværktøj
 	Refine Hair	Forfin hår
-	Refine Hair needs hair detection, which isn't available yet	Forfin hår kræver hårregistrering, som endnu ikke er tilgængelig
+	Refine the selection's whole edge from the image	Forfin hele markeringens kant ud fra billedet
 	Refine Mode	Forfiningstilstand
 	Select and Mask was closed: another layer was selected	Markér og maskér blev lukket: et andet lag blev markeret
 	Select and Mask was closed: its document is no longer the active one	Markér og maskér blev lukket: dets dokument er ikke længere det aktive
@@ -4795,3 +4795,23 @@ cameraRaw	White Balance: As Shot	Hvidbalance: Som fotograferet
 	Pick a different document for each channel.	Vælg et andet dokument til hver kanal.
 	A picked document is no longer open.	Et af de valgte dokumenter er ikke længere åbent.
 	A picked document is no longer a grayscale document of the same size.	Et af de valgte dokumenter er ikke længere et dokument i gråtoner i samme størrelse.
+	Contextual Task Bar	Kontekstuel opgavelinje
+	Drag contextual task bar	Træk kontekstuel opgavelinje
+	Reset position	Nulstil placering
+	Hide contextual task bar	Skjul kontekstuel opgavelinje
+	Contextual task bar options	Indstillinger for kontekstuel opgavelinje
+	Hide the background with an editable layer mask.	Skjul baggrunden med en redigerbar lagmaske.
+	Subject / background removal	Motiv / fjernelse af baggrund
+	Object selection	Objektmarkering
+	Classical (built in)	Klassisk (indbygget)
+	Download	Hent
+	Download a model before choosing it. Downloads do not change the current method.	Hent en model, før du vælger den. Overførsler ændrer ikke den aktuelle metode.
+	Downloaded	Hentet
+	In use…	I brug…
+	Large models can take time and use several GB of memory. Progress and Cancel appear in the status bar.	Store modeller kan tage tid og bruge flere GB hukommelse. Status og Annuller vises på statuslinjen.
+	Local models aren't available in this build or session.	Lokale modeller er ikke tilgængelige i denne version eller session.
+	Local selection models	Lokale markeringsmodeller
+	Model details	Modeldetaljer
+	Models run on this device. Images stay on this device.	Modeller kører på denne enhed. Billeder forbliver på denne enhed.
+	Not downloaded	Ikke hentet
+	Remove download	Fjern overførsel
